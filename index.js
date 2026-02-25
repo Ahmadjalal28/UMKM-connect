@@ -125,7 +125,9 @@ export default function App() {
   );
 }
 
-
+// ==========================================
+// 1. LAYAR AUTENTIKASI
+// ==========================================
 function AuthScreen({ systemUser, onLoginSuccess }) {
   const [mode, setMode] = useState('login');
   const [isLoading, setIsLoading] = useState(false);
@@ -162,7 +164,7 @@ function AuthScreen({ systemUser, onLoginSuccess }) {
         const docRef = await addDoc(accountsRef, newAccountData);
         const account = { id: docRef.id, ...newAccountData };
         
-      
+        // Simpan ke direktori publik untuk keperluan Chat & Profil Publik
         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_directory', docRef.id), {
           id: docRef.id, name: formData.name, role: formData.role, storeName: newAccountData.storeName
         });
@@ -259,7 +261,9 @@ function AuthScreen({ systemUser, onLoginSuccess }) {
   );
 }
 
-
+// ==========================================
+// 2. MAIN DASHBOARD & NAVIGATION
+// ==========================================
 function MainDashboard({ systemUser, account, setAccount, onLogout }) {
   const [currentView, setCurrentView] = useState('dashboard');
   const isUMKM = account.role === 'umkm';
@@ -358,7 +362,9 @@ function MainDashboard({ systemUser, account, setAccount, onLogout }) {
   );
 }
 
-
+// ==========================================
+// KOMPONEN DASHBOARD & PROFIL
+// ==========================================
 const HomeDashboard = ({ account, isUMKM, setView }) => (
   <div className="space-y-6">
     <div className={`p-8 rounded-3xl text-white shadow-lg bg-gradient-to-br ${isUMKM ? 'from-indigo-600 to-purple-700' : 'from-emerald-500 to-teal-600'}`}>
@@ -467,7 +473,9 @@ const ProfileManager = ({ systemUser, account, setAccount }) => {
   );
 };
 
-
+// ==========================================
+// FITUR UMKM: STRATEGI & BUDGETING
+// ==========================================
 const UMKMStrategy = () => {
   const [inputs, setInputs] = useState({ modal: '', hpp: '', harga: '', targetBulan: '' });
   const [result, setResult] = useState(null);
@@ -545,7 +553,9 @@ const UMKMStrategy = () => {
   );
 };
 
-
+// ==========================================
+// FITUR UMKM: AKUNTANSI AI
+// ==========================================
 const UMKMAccounting = ({ systemUser, account }) => {
   const [entries, setEntries] = useState([]);
   const [form, setForm] = useState({ date: '', desc: '', type: 'income', amount: '' });
@@ -553,7 +563,8 @@ const UMKMAccounting = ({ systemUser, account }) => {
   const [loadingAi, setLoadingAi] = useState(false);
 
   useEffect(() => {
-    
+    // Kita gunakan collection public/data untuk simulasi karena aturan rule strict, 
+    // TAPI kita filter berdasarkan account.id agar private.
     const accRef = collection(db, 'artifacts', appId, 'public', 'data', 'accounting');
     const unsubscribe = onSnapshot(accRef, (snap) => {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.accountId === account.id);
@@ -640,7 +651,9 @@ const UMKMAccounting = ({ systemUser, account }) => {
   );
 };
 
-
+// ==========================================
+// FITUR UMKM: KELOLA LOWONGAN & PELAMAR
+// ==========================================
 const UMKMJobManagement = ({ systemUser, account }) => {
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -734,7 +747,9 @@ const UMKMJobManagement = ({ systemUser, account }) => {
   );
 };
 
-
+// ==========================================
+// FITUR PENCARI KERJA: CARI & LAMAR
+// ==========================================
 const SeekerJobSearch = ({ systemUser, account, setView }) => {
   const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState('');
@@ -847,7 +862,9 @@ const SeekerApplications = ({ account }) => {
   );
 };
 
-
+// ==========================================
+// FITUR SHARED: SISTEM CHAT
+// ==========================================
 const ChatSystem = ({ account }) => {
   const [directory, setDirectory] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
