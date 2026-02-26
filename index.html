@@ -274,7 +274,7 @@
                 <div id="job-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
 
-            <!-- Modal Lowongan -->
+            <!-- Modal Lowongan Baru UMKM -->
             <div id="job-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl">
                     <h3 class="text-2xl font-bold mb-6">Posting Lowongan Baru</h3>
@@ -290,6 +290,26 @@
                             <button type="submit" class="flex-[2] bg-primary text-white py-4 rounded-2xl font-bold">Terbitkan Lowongan</button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- FITUR BARU: Modal Opsi Lamaran (Pekerja) -->
+            <div id="apply-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl text-center">
+                    <div class="w-16 h-16 bg-blue-50 text-primary rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Pilih Opsi Lamaran</h3>
+                    <p class="text-xs text-slate-500 mb-6">Bagaimana Anda ingin terhubung dengan UMKM ini?</p>
+                    <div class="space-y-3">
+                        <button onclick="executeApply('ask')" class="w-full bg-white border-2 border-slate-100 text-slate-700 py-4 rounded-2xl font-bold hover:border-primary hover:text-primary transition flex items-center justify-center gap-2">
+                            <i class="fas fa-comment-dots"></i> Chat Pelaku UMKM
+                        </button>
+                        <button onclick="executeApply('cv')" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-file-alt"></i> Kirim CV & Lamar
+                        </button>
+                    </div>
+                    <button onclick="closeApplyModal()" class="mt-6 text-xs font-bold text-slate-400 hover:text-slate-600">Batal</button>
                 </div>
             </div>
         </section>
@@ -556,6 +576,8 @@
             if (!grid) return;
             const s = document.getElementById('job-search').value.toLowerCase();
             const filtered = allJobs.filter(j => j.title.toLowerCase().includes(s) || j.shopName.toLowerCase().includes(s));
+            
+            // FITUR BARU: Mengubah tombol untuk membuka modal opsi lamaran
             grid.innerHTML = filtered.map(j => `
                 <div class="bg-white p-6 rounded-[2rem] border hover:shadow-lg transition-all">
                     <div class="flex items-center gap-3 mb-4">
@@ -563,7 +585,7 @@
                         <div><h4 class="font-bold text-sm">${j.title}</h4><p class="text-[10px] text-primary font-bold uppercase">${j.shopName}</p></div>
                     </div>
                     <div class="text-xs text-slate-500 mb-4">${j.location} • Rp ${j.salary}Jt</div>
-                    <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
+                    <button onclick="openApplyModal('${j.id}', '${j.userId}', '${j.title}')" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
                 </div>
             `).join('');
         };
@@ -591,9 +613,49 @@
 
         window.deleteJob = (id) => { allJobs = allJobs.filter(j => j.id !== id); DB.set('jobs', allJobs); renderJobManagement(); };
         window.toggleJobModal = (s) => document.getElementById('job-modal').classList.toggle('hidden', !s);
-        window.applyJob = (jobId, empId) => {
-            if (allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id)) return showToast('Sudah dilamar', 'error');
-            allApps.push({ jobId, employerId: empId, workerId: currentUser.id }); DB.set('applications', allApps); showToast('Lamaran dikirim'); navigate('chat');
+
+        // FITUR BARU: Opsi Lamaran (Chat Tanya / Chat Kirim CV)
+        let selectedApplyJob = null;
+
+        window.openApplyModal = (jobId, empId, jobTitle) => {
+            selectedApplyJob = { jobId, empId, jobTitle };
+            document.getElementById('apply-modal').classList.remove('hidden');
+        };
+
+        window.closeApplyModal = () => {
+            selectedApplyJob = null;
+            document.getElementById('apply-modal').classList.add('hidden');
+        };
+
+        window.executeApply = (type) => {
+            if (!selectedApplyJob) return;
+            const { jobId, empId, jobTitle } = selectedApplyJob;
+            
+            // 1. Daftarkan relasi (application) agar fitur chat yang ada bisa mendeteksi kontak mereka
+            const existingApp = allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id);
+            if (!existingApp) {
+                allApps.push({ jobId, employerId: empId, workerId: currentUser.id }); 
+                DB.set('applications', allApps);
+            }
+
+            // 2. Siapkan format pesan otomatis berdasarkan opsi yang dipilih
+            let initialMsg = "";
+            if (type === 'ask') {
+                initialMsg = `Halo, saya melihat lowongan untuk posisi *${jobTitle}*. Boleh saya bertanya lebih lanjut mengenai detail pekerjaan ini?`;
+            } else if (type === 'cv') {
+                initialMsg = `Halo, saya ingin melamar posisi *${jobTitle}*.\n\nBerikut ringkasan profil dan CV saya:\nNama: ${currentUser.name}\nKeahlian/Bakat: ${currentUser.skill || '-'}\n\nMohon pertimbangkan lamaran saya. Terima kasih!`;
+            }
+
+            // 3. Masukkan pesan ke dalam database Chat
+            allChats.push({ from: currentUser.id, to: empId, msg: initialMsg, time: Date.now() }); 
+            DB.set('chats', allChats);
+
+            closeApplyModal();
+            showToast(type === 'cv' ? 'CV terkirim via Chat' : 'Pesan pertanyaan terkirim');
+            
+            // 4. Arahkan pengguna ke halaman Chat dan buka percakapan dengan UMKM terkait
+            navigate('chat');
+            setTimeout(() => { openChat(empId); }, 50);
         };
 
         // Finance View
@@ -634,8 +696,8 @@
         };
         window.openDummyModal = () => document.getElementById('dummy-modal').classList.remove('hidden');
         window.closeDummyModal = () => document.getElementById('dummy-modal').classList.add('hidden');
-        window.exportDB = () => { navigator.clipboard.writeText(btoa(JSON.stringify({ jobs: allJobs, users: allUsers, apps: allApps }))); showToast('Kode disalin'); };
-        window.importDB = () => { const code = prompt("Tempel kode:"); if (code) { try { const data = JSON.parse(atob(code)); allJobs = data.jobs; DB.set('jobs', allJobs); allUsers = data.users; DB.set('users', allUsers); allApps = data.apps; DB.set('applications', allApps); location.reload(); } catch(e) { showToast('Gagal', 'error'); } } };
+        window.exportDB = () => { navigator.clipboard.writeText(btoa(JSON.stringify({ jobs: allJobs, users: allUsers, apps: allApps, chats: allChats }))); showToast('Kode disalin'); };
+        window.importDB = () => { const code = prompt("Tempel kode:"); if (code) { try { const data = JSON.parse(atob(code)); allJobs = data.jobs; DB.set('jobs', allJobs); allUsers = data.users; DB.set('users', allUsers); allApps = data.apps; DB.set('applications', allApps); allChats = data.chats || []; DB.set('chats', allChats); location.reload(); } catch(e) { showToast('Gagal', 'error'); } } };
 
         // Chat
         const renderChatList = () => {
@@ -645,8 +707,15 @@
         window.openChat = (id) => {
             activeChatId = id; document.getElementById('chat-window').classList.remove('hidden');
             const msgs = allChats.filter(c => (c.from === currentUser.id && c.to === id) || (c.to === currentUser.id && c.from === id));
-            document.getElementById('chat-box').innerHTML = msgs.map(m => `<div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}"><div class="p-3 rounded-xl text-xs ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div></div>`).join('');
+            
+            // FITUR BARU: Menambahkan whitespace-pre-wrap agar enter/baris baru pada CV otomatis terbaca rapi
+            document.getElementById('chat-box').innerHTML = msgs.map(m => `<div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}"><div class="p-3 rounded-xl text-xs whitespace-pre-wrap ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div></div>`).join('');
+            
+            // Auto scroll ke bawah
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
         };
+        
         window.handleSendMessage = (e) => {
             e.preventDefault(); const val = document.getElementById('chat-input').value; if(!val || !activeChatId) return;
             allChats.push({ from: currentUser.id, to: activeChatId, msg: val, time: Date.now() }); DB.set('chats', allChats);
