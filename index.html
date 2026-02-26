@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMKM Connect - Cloud Edition</title>
+    <title>UMKM Connect - Solusi Ekosistem UMKM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,17 +13,22 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { primary: '#2563eb', secondary: '#10b981', accent: '#f59e0b', dark: '#0f172a' }
+                    colors: { 
+                        primary: '#2563eb', 
+                        secondary: '#10b981', 
+                        accent: '#f59e0b',
+                        dark: '#0f172a' 
+                    }
                 }
             }
         }
     </script>
     <style>
         body { background-color: #f8fafc; color: #334155; }
-        .page-section { display: none; }
-        .page-section.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .page-section { display: none; animation: slideUp 0.3s ease-out; }
+        .page-section.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
@@ -40,11 +45,13 @@
                     <span class="font-bold text-xl tracking-tight text-dark">UMKM <span class="text-primary">Connect</span></span>
                 </div>
 
-                <div id="nav-user" class="hidden flex items-center space-x-2 sm:space-x-4">
-                    <button onclick="navigate('dashboard')" class="p-2 text-slate-500 hover:text-primary transition"><i class="fas fa-th-large"></i></button>
-                    <button id="nav-finance-btn" onclick="navigate('finance')" class="hidden p-2 text-slate-500 hover:text-primary transition"><i class="fas fa-calculator"></i></button>
-                    <button onclick="navigate('chat')" class="p-2 text-slate-500 hover:text-primary transition relative">
-                        <i class="fas fa-comments"></i>
+                <div id="nav-user" class="hidden flex items-center space-x-1 sm:space-x-4">
+                    <button onclick="navigate('dashboard')" class="p-2 text-slate-500 hover:text-primary transition" title="Dashboard"><i class="fas fa-th-large text-lg"></i></button>
+                    <button id="nav-jobs-btn" onclick="navigate('jobs')" class="p-2 text-slate-500 hover:text-primary transition" title="Lowongan"><i class="fas fa-briefcase text-lg"></i></button>
+                    <button id="nav-finance-btn" onclick="navigate('finance')" class="hidden p-2 text-slate-500 hover:text-primary transition" title="Keuangan & Kalkulator"><i class="fas fa-calculator text-lg"></i></button>
+                    <button onclick="navigate('chat')" class="p-2 text-slate-500 hover:text-primary transition relative" title="Pesan">
+                        <i class="fas fa-comments text-lg"></i>
+                        <span id="chat-notif" class="hidden absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
                     <div class="h-8 w-px bg-slate-200 mx-2"></div>
                     <button onclick="navigate('profile')" class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-100 transition">
@@ -55,59 +62,82 @@
 
                 <div id="nav-guest" class="flex items-center space-x-4">
                     <button onclick="navigate('auth')" class="text-slate-600 font-medium hover:text-primary">Masuk</button>
-                    <button onclick="navigate('auth')" class="bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Mulai</button>
+                    <button onclick="navigate('auth')" class="bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Mulai Sekarang</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Loading Overlay -->
-        <div id="loading-screen" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[200] flex items-center justify-center hidden">
-            <div class="flex flex-col items-center">
-                <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <p class="mt-4 font-bold text-primary">Sinkronisasi Data...</p>
-            </div>
-        </div>
 
-        <!-- LANDING -->
-        <section id="page-home" class="page-section active text-center py-20">
-            <h1 class="text-5xl font-extrabold text-dark mb-6">Cloud UMKM Ecosystem</h1>
-            <p class="text-slate-500 max-w-2xl mx-auto mb-10">Data Anda tersimpan dengan aman dan dapat diakses kapan saja, di mana saja.</p>
-            <button onclick="navigate('auth')" class="bg-primary text-white px-10 py-4 rounded-full font-bold text-lg shadow-xl hover:scale-105 transition-all">Masuk Sekarang</button>
-            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 opacity-50 grayscale italic text-sm">
-                <div>Backup Otomatis</div>
-                <div>Multi Perangkat</div>
-                <div>Real-time Chat</div>
-                <div>Laporan AI</div>
+        <!-- LANDING PAGE -->
+        <section id="page-home" class="page-section active text-center py-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-dark mb-6 leading-tight">
+                Empower Your <span class="text-primary">Small Business</span> <br>with Local Talents.
+            </h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto mb-10">Platform manajemen usaha, laporan keuangan cerdas, dan rekrutmen talenta lokal dalam satu aplikasi.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="navigate('auth')" class="bg-primary text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all">Temukan Karir</button>
+                <button onclick="navigate('auth')" class="bg-white text-dark border border-slate-200 px-10 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition-all">Kelola UMKM</button>
             </div>
         </section>
 
-        <!-- AUTH -->
+        <!-- AUTH PAGE -->
         <section id="page-auth" class="page-section">
-            <div class="max-w-md mx-auto bg-white rounded-3xl shadow-xl border overflow-hidden">
+            <div class="max-w-md mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+                <div class="flex p-2 bg-slate-50 gap-2">
+                    <button id="tab-login" class="flex-1 py-3 font-bold rounded-2xl transition-all" onclick="toggleAuthTab('login')">Masuk</button>
+                    <button id="tab-register" class="flex-1 py-3 font-bold rounded-2xl transition-all" onclick="toggleAuthTab('register')">Daftar</button>
+                </div>
                 <div class="p-8">
-                    <h2 class="text-2xl font-bold mb-2">Selamat Datang Kembali</h2>
-                    <p class="text-slate-400 text-sm mb-8">Gunakan akun dummy atau daftar baru.</p>
-                    <form onsubmit="handleAuth(event)">
+                    <form id="form-login" onsubmit="handleAuth(event, 'login')">
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Email</label>
-                            <input type="email" id="auth-email" class="w-full px-5 py-3 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-primary" placeholder="contoh: kopi@dummy.com" required>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
+                            <input type="email" id="log-email" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="anda@email.com" required>
                         </div>
                         <div class="mb-6">
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Password</label>
-                            <input type="password" id="auth-pass" class="w-full px-5 py-3 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-primary" placeholder="123456" required>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
+                            <input type="password" id="log-pass" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="••••••••" required>
                         </div>
-                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg">Masuk</button>
+                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg transition-all">Masuk</button>
                     </form>
-                    <div class="mt-6 p-4 bg-amber-50 rounded-2xl text-xs text-amber-700">
-                        <p class="font-bold mb-1">Akun Dummy Tersedia:</p>
-                        <ul class="list-disc pl-4 space-y-1">
-                            <li>kopi@dummy.com (UMKM)</li>
-                            <li>barista@dummy.com (Pekerja)</li>
-                        </ul>
-                    </div>
+
+                    <form id="form-register" class="hidden" onsubmit="handleAuth(event, 'register')">
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Peran Akun</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="role" value="umkm" class="hidden peer" checked onchange="toggleRegFields('umkm')">
+                                    <div class="p-3 text-center border-2 border-slate-100 rounded-2xl peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary">
+                                        <i class="fas fa-store mb-1 block"></i> <span class="text-sm font-bold">UMKM</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="role" value="worker" class="hidden peer" onchange="toggleRegFields('worker')">
+                                    <div class="p-3 text-center border-2 border-slate-100 rounded-2xl peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary">
+                                        <i class="fas fa-user-tie mb-1 block"></i> <span class="text-sm font-bold">Pekerja</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Lengkap Pemilik</label>
+                            <input type="text" id="reg-name" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
+                        </div>
+                        <div id="field-shop-name" class="mb-4">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Toko/Usaha</label>
+                            <input type="text" id="reg-shop" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="Contoh: Kopi Senja">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
+                            <input type="email" id="reg-email" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
+                            <input type="password" id="reg-pass" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
+                        </div>
+                        <button type="submit" class="w-full bg-secondary text-white py-4 rounded-2xl font-bold shadow-lg transition-all">Buat Akun</button>
+                    </form>
                 </div>
             </div>
         </section>
@@ -115,288 +145,563 @@
         <!-- DASHBOARD -->
         <section id="page-dashboard" class="page-section">
             <div id="dash-umkm" class="hidden">
-                <h2 class="text-3xl font-bold mb-8">Dashboard <span id="dash-shop" class="text-primary italic"></span></h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <div class="bg-white p-6 rounded-3xl border shadow-sm">
-                        <p class="text-slate-400 text-sm">Saldo</p>
-                        <h3 id="dash-balance" class="text-2xl font-bold">Rp 0</h3>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl border shadow-sm">
-                        <p class="text-slate-400 text-sm">Status Cloud</p>
-                        <h3 class="text-2xl font-bold text-green-500"><i class="fas fa-cloud-upload-alt mr-2"></i>Aktif</h3>
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold">Halo, <span id="dash-shop-name" class="text-primary italic">Toko</span>!</h2>
+                        <p class="text-slate-500">Pemilik: <span id="dash-owner-name">Nama</span></p>
                     </div>
                 </div>
-                <div class="bg-dark p-8 rounded-[2rem] text-white flex justify-between items-center">
-                    <div>
-                        <h4 class="font-bold text-xl">Butuh Pekerja Baru?</h4>
-                        <p class="text-slate-400 text-sm">Posting lowongan dan temukan talenta lokal.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                        <p class="text-slate-400 text-sm font-medium">Saldo Kas</p>
+                        <h3 id="dash-balance" class="text-2xl font-bold text-dark">Rp 0</h3>
                     </div>
-                    <button onclick="navigate('jobs')" class="bg-primary px-6 py-3 rounded-xl font-bold">Kelola Lowongan</button>
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                        <p class="text-slate-400 text-sm font-medium">Estimasi Profit Bulan Ini</p>
+                        <h3 id="dash-profit" class="text-2xl font-bold text-secondary">Rp 0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                        <p class="text-slate-400 text-sm font-medium">Lowongan Aktif</p>
+                        <h3 id="dash-jobs-count" class="text-2xl font-bold text-dark">0</h3>
+                    </div>
+                </div>
+
+                <div class="bg-blue-600 p-8 rounded-[2rem] text-white flex flex-col md:flex-row items-center gap-8 shadow-xl">
+                    <div class="text-5xl opacity-50"><i class="fas fa-magic"></i></div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-xl mb-2">Laporan Akuntansi AI</h4>
+                        <p id="dash-ai-insight" class="text-blue-100">Analisis otomatis keuangan Anda tersedia sekarang.</p>
+                    </div>
+                    <button onclick="navigate('finance')" class="bg-white text-blue-600 px-6 py-3 rounded-2xl font-bold whitespace-nowrap">Lihat Analisis</button>
                 </div>
             </div>
 
             <div id="dash-worker" class="hidden">
-                <h2 class="text-3xl font-bold mb-8">Halo, <span id="dash-worker-name" class="text-primary"></span></h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="jobs-container">
-                    <!-- Jobs from Firestore -->
+                <div class="mb-10">
+                    <h2 class="text-3xl font-bold">Halo, <span id="worker-name" class="text-primary">Pekerja</span>!</h2>
+                    <p class="text-slate-500">Cari lowongan yang cocok dengan keahlian Anda.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-3xl shadow-sm border mb-10 flex items-center gap-4">
+                    <div class="flex-1 flex items-center bg-slate-50 px-5 py-3 rounded-2xl">
+                        <i class="fas fa-search text-slate-300 mr-3"></i>
+                        <input type="text" id="job-search" onkeyup="filterJobs()" placeholder="Cari posisi atau nama UMKM..." class="bg-transparent w-full outline-none text-sm">
+                    </div>
+                </div>
+
+                <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCE & CALCULATION -->
+        <section id="page-finance" class="page-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-8">
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border">
+                        <h3 class="font-bold text-xl mb-6"><i class="fas fa-calculator text-primary mr-2"></i>Kalkulator Usaha (Simulasi)</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Budget Modal (Rp)</label>
+                                <input type="number" id="calc-budget" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="10000000">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Estimasi Penjualan/Bulan (Unit)</label>
+                                <input type="number" id="calc-sales" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="100">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Harga per Unit (Rp)</label>
+                                <input type="number" id="calc-price" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="50000">
+                            </div>
+                            <button onclick="calculateStrategy()" class="w-full bg-dark text-white py-4 rounded-2xl font-bold">Hitung Strategi & Profit</button>
+                        </div>
+                        <div id="calc-result" class="mt-6 p-6 bg-slate-50 rounded-2xl hidden">
+                            <div class="flex justify-between mb-2"><span class="text-sm">Estimasi Omzet:</span> <span id="res-omzet" class="font-bold"></span></div>
+                            <div class="flex justify-between mb-2"><span class="text-sm">Potensi Profit:</span> <span id="res-profit" class="font-bold text-secondary"></span></div>
+                            <div class="mt-4 pt-4 border-t border-slate-200">
+                                <p class="text-xs font-bold text-slate-400 uppercase mb-2">Strategi AI:</p>
+                                <p id="res-strategy" class="text-sm italic text-slate-600"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border">
+                        <h3 class="font-bold text-xl mb-6"><i class="fas fa-book text-primary mr-2"></i>Input Akuntansi</h3>
+                        <form onsubmit="addTransaction(event)">
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <select id="fin-type" class="p-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm">
+                                    <option value="income">Pemasukan</option>
+                                    <option value="expense">Pengeluaran</option>
+                                </select>
+                                <input type="number" id="fin-amount" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Nominal" required>
+                            </div>
+                            <input type="text" id="fin-note" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Keterangan..." required>
+                            <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold">Catat Transaksi</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl shadow-sm border h-fit">
+                    <h3 class="font-bold text-xl mb-6">Laporan Akuntansi Sederhana (AI)</h3>
+                    <div id="ai-report-box" class="mb-6 p-5 bg-blue-50 border border-blue-100 rounded-2xl text-sm leading-relaxed text-blue-800">
+                        <i class="fas fa-robot mr-2"></i> <span id="ai-report-text">Belum ada data. Masukkan transaksi untuk analisis AI.</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-slate-400 font-bold uppercase text-[10px] border-b">
+                                <tr>
+                                    <th class="py-3">Tanggal</th>
+                                    <th class="py-3">Keterangan</th>
+                                    <th class="py-3 text-right">Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finance-table" class="divide-y divide-slate-50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOBS -->
+        <section id="page-jobs" class="page-section">
+            <div id="jobs-umkm-view" class="hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold">Lowongan Saya</h2>
+                    <button onclick="toggleJobModal(true)" class="bg-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg"><i class="fas fa-plus mr-2"></i>Buat Lowongan</button>
+                </div>
+                <div id="my-jobs-list" class="space-y-4"></div>
+            </div>
+
+            <div id="jobs-worker-view" class="hidden">
+                <h2 class="text-3xl font-bold mb-8">Eksplorasi Karir UMKM</h2>
+                <div id="explore-jobs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+
+            <!-- Job Modal -->
+            <div id="job-modal" class="fixed inset-0 bg-dark/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-10">
+                    <h3 class="text-2xl font-bold mb-6">Posting Lowongan</h3>
+                    <form onsubmit="postJob(event)">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <input type="text" id="job-title" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Posisi" required>
+                            <input type="number" id="job-salary" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Gaji (Juta)" required>
+                        </div>
+                        <input type="text" id="job-loc" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Lokasi" required>
+                        <textarea id="job-desc" rows="4" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-6" placeholder="Deskripsi..." required></textarea>
+                        <div class="flex gap-4">
+                            <button type="button" onclick="toggleJobModal(false)" class="flex-1 font-bold text-slate-400">Batal</button>
+                            <button type="submit" class="flex-2 bg-primary text-white py-4 rounded-2xl font-bold px-10">Posting</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
 
         <!-- CHAT -->
         <section id="page-chat" class="page-section h-[70vh]">
-            <div class="bg-white rounded-3xl border flex h-full overflow-hidden shadow-sm">
-                <div class="w-1/3 border-r flex flex-col">
-                    <div class="p-6 border-b font-bold text-lg">Pesan</div>
-                    <div id="chat-list" class="flex-1 overflow-y-auto custom-scrollbar"></div>
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 flex h-full overflow-hidden">
+                <!-- Sidebar Pesan (Daftar Kontak Terhubung) -->
+                <div class="w-1/3 border-r hidden md:flex flex-col">
+                    <div class="p-6 border-b flex justify-between items-center">
+                        <h3 class="font-bold text-xl">Pesan</h3>
+                    </div>
+                    <div id="chat-users" class="flex-1 overflow-y-auto custom-scrollbar">
+                        <!-- Kontak yang sudah melamar/dilamar muncul di sini -->
+                    </div>
                 </div>
-                <div class="flex-1 flex flex-col bg-slate-50">
-                    <div id="chat-active-target" class="p-6 bg-white border-b font-bold text-slate-400">Pilih Kontak</div>
-                    <div id="chat-messages" class="flex-1 p-6 overflow-y-auto flex flex-col gap-3"></div>
-                    <form class="p-4 bg-white border-t flex gap-3" onsubmit="handleSendMessage(event)">
-                        <input type="text" id="chat-input" class="flex-1 bg-slate-100 px-6 py-3 rounded-xl outline-none" placeholder="Tulis pesan..." disabled>
-                        <button id="chat-send-btn" class="bg-primary text-white px-6 rounded-xl disabled:opacity-50" disabled><i class="fas fa-paper-plane"></i></button>
-                    </form>
+                <!-- Box Chat -->
+                <div class="flex-1 flex flex-col bg-slate-50/50">
+                    <div id="chat-header" class="p-6 bg-white border-b flex items-center">
+                        <h4 id="chat-active-name" class="font-bold text-slate-400">Pilih kontak dari daftar lamaran untuk memulai chat</h4>
+                    </div>
+                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
+                        <div id="chat-empty-state" class="flex flex-col items-center justify-center h-full text-center text-slate-400 opacity-60">
+                            <i class="fas fa-lock text-4xl mb-4"></i>
+                            <p class="max-w-xs mx-auto text-sm">Anda hanya dapat berkirim pesan jika sudah ada proses lamaran kerja antara kedua pihak.</p>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-white border-t">
+                        <form class="flex gap-4" onsubmit="sendMessage(event)">
+                            <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-50 px-6 py-4 rounded-2xl outline-none" disabled>
+                            <button type="submit" id="chat-btn" class="bg-primary text-white w-14 h-14 rounded-2xl flex items-center justify-center disabled:opacity-50" disabled><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="page-profile" class="page-section">
+            <div class="max-w-3xl mx-auto bg-white rounded-[2.5rem] shadow-sm border p-10">
+                <div class="flex justify-between items-start mb-10">
+                    <div class="flex items-center gap-6">
+                        <img id="prof-img" src="" class="w-24 h-24 rounded-3xl object-cover border-4 border-slate-100">
+                        <div>
+                            <h2 id="prof-name-display" class="text-3xl font-bold">Nama</h2>
+                            <p id="prof-role-display" class="text-slate-400 uppercase font-bold text-xs tracking-widest mt-1">ROLE</p>
+                        </div>
+                    </div>
+                    <button onclick="saveProfile()" class="bg-secondary text-white px-8 py-3 rounded-2xl font-bold">Simpan</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Lengkap</label>
+                        <input type="text" id="prof-name" class="w-full p-4 bg-slate-50 rounded-2xl outline-none">
+                    </div>
+                    <div id="prof-field-shop">
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Toko/Usaha</label>
+                        <input type="text" id="prof-shop" class="w-full p-4 bg-slate-50 rounded-2xl outline-none">
+                    </div>
+                    <div id="prof-field-skill" class="hidden md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Keahlian Utama</label>
+                        <input type="text" id="prof-skill" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Contoh: Barista, Desain Grafis">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Deskripsi / Bio</label>
+                        <textarea id="prof-desc" rows="4" class="w-full p-4 bg-slate-50 rounded-2xl outline-none"></textarea>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-dark text-white rounded-full font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[300]"></div>
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-dark text-white rounded-full font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[200]"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Config
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'umkm-connect-v1';
-
+    <script>
         // State
+        let users = JSON.parse(localStorage.getItem('uc_users') || '[]');
         let currentUser = null;
         let activeChatId = null;
+        let transactions = JSON.parse(localStorage.getItem('uc_finance') || '[]');
+        let jobs = JSON.parse(localStorage.getItem('uc_jobs') || '[]');
+        let chats = JSON.parse(localStorage.getItem('uc_chats') || '[]');
+        let applications = JSON.parse(localStorage.getItem('uc_apps') || '[]'); // Menyimpan data lamaran/kontak kerja
 
-        // Initialize App & Auth
-        const init = async () => {
-            showLoading(true);
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Saat auth siap, pastikan akun dummy ada di Firestore
-                await seedDummyAccounts();
-                showLoading(false);
-            }
-        });
-
-        // Seed Dummy Data to Firestore
-        const seedDummyAccounts = async () => {
-            const dummies = [
-                { email: 'kopi@dummy.com', pass: '123456', name: 'Budi', shop: 'Kopi Senja', role: 'umkm', skill: '', desc: 'Kopi lokal terbaik.' },
-                { email: 'bakery@dummy.com', pass: '123456', name: 'Sari', shop: 'Roti Manis', role: 'umkm', skill: '', desc: 'Toko roti keluarga.' },
-                { email: 'barista@dummy.com', pass: '123456', name: 'Andi', role: 'worker', shop: '', skill: 'Barista', desc: 'Berpengalaman 2 tahun.' },
-                { email: 'admin@dummy.com', pass: '123456', name: 'Maya', role: 'worker', shop: '', skill: 'Admin Sosmed', desc: 'Mahir Canva & IG.' },
-                { email: 'kurir@dummy.com', pass: '123456', name: 'Bimo', role: 'worker', shop: '', skill: 'Kurir Motor', desc: 'Hafal rute kota.' }
-            ];
-
-            for (const d of dummies) {
-                const userDoc = doc(db, 'artifacts', appId, 'public', 'data', 'users', d.email);
-                const snap = await getDoc(userDoc);
-                if (!snap.exists()) {
-                    await setDoc(userDoc, { ...d, uid: d.email, avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(d.shop || d.name)}&background=random` });
-                }
-            }
-        };
-
-        // Actions
-        window.handleAuth = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            
-            showLoading(true);
-            const userDoc = doc(db, 'artifacts', appId, 'public', 'data', 'users', email);
-            const snap = await getDoc(userDoc);
-
-            if (snap.exists() && snap.data().pass === pass) {
-                currentUser = snap.data();
-                updateUIForUser();
-                navigate('dashboard');
-                showToast(`Halo, ${currentUser.name}!`);
-            } else {
-                showToast('Email atau password salah!', 'error');
-            }
-            showLoading(false);
-        };
-
-        window.logout = () => {
-            currentUser = null;
-            updateUIForUser();
-            navigate('home');
-            showToast('Berhasil keluar.');
-        };
-
-        const updateUIForUser = () => {
-            const navUser = document.getElementById('nav-user');
-            const navGuest = document.getElementById('nav-guest');
-            if (currentUser) {
-                navUser.classList.remove('hidden');
-                navGuest.classList.add('hidden');
-                document.getElementById('nav-avatar').src = currentUser.avatar;
-                document.getElementById('nav-finance-btn').classList.toggle('hidden', currentUser.role !== 'umkm');
-                
-                // Dashboard dynamic content
-                if (currentUser.role === 'umkm') {
-                    document.getElementById('dash-umkm').classList.remove('hidden');
-                    document.getElementById('dash-worker').classList.add('hidden');
-                    document.getElementById('dash-shop').innerText = currentUser.shop;
-                } else {
-                    document.getElementById('dash-umkm').classList.add('hidden');
-                    document.getElementById('dash-worker').classList.remove('hidden');
-                    document.getElementById('dash-worker-name').innerText = currentUser.name;
-                    loadAllJobs();
-                }
-            } else {
-                navUser.classList.add('hidden');
-                navGuest.classList.remove('hidden');
-            }
-        };
-
-        // Jobs System (Public Data)
-        const loadAllJobs = () => {
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'jobs'));
-            onSnapshot(q, (snap) => {
-                const container = document.getElementById('jobs-container');
-                container.innerHTML = '';
-                snap.forEach(doc => {
-                    const j = doc.data();
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-3xl border shadow-sm hover:shadow-md transition";
-                    card.innerHTML = `
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="${j.avatar}" class="w-12 h-12 rounded-xl object-cover">
-                            <div><h4 class="font-bold">${j.title}</h4><p class="text-primary text-xs font-bold">${j.shopName}</p></div>
-                        </div>
-                        <button onclick="window.applyJob('${doc.id}', '${j.userId}')" class="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold">Lamar & Chat</button>
-                    `;
-                    container.appendChild(card);
-                });
-                if (snap.empty) {
-                    container.innerHTML = '<p class="col-span-full text-center text-slate-400 py-10">Belum ada lowongan tersedia.</p>';
-                }
-            }, (err) => console.error(err));
-        };
-
-        window.applyJob = async (jobId, employerEmail) => {
-            showToast('Lamaran terkirim! Membuka chat...');
-            // In a real app, this would create a link. Here we just open chat to the employer email.
-            navigate('chat');
-            window.openChat(employerEmail);
-        };
-
-        // Chat System (Public Data for Simplicity in Demo)
-        window.openChat = async (targetId) => {
-            activeChatId = targetId;
-            const targetDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', targetId));
-            const targetData = targetDoc.data();
-            
-            document.getElementById('chat-active-target').innerText = `Chat dengan ${targetData.shop || targetData.name}`;
-            document.getElementById('chat-active-target').classList.remove('text-slate-400');
-            document.getElementById('chat-input').disabled = false;
-            document.getElementById('chat-send-btn').disabled = false;
-
-            // Listen for messages
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'chats'));
-            onSnapshot(q, (snap) => {
-                const box = document.getElementById('chat-messages');
-                box.innerHTML = '';
-                // Rule: filter in JS memory
-                const msgs = snap.docs
-                    .map(d => d.data())
-                    .filter(m => (m.from === currentUser.uid && m.to === activeChatId) || (m.from === activeChatId && m.to === currentUser.uid))
-                    .sort((a, b) => (a.ts?.seconds || 0) - (b.ts?.seconds || 0));
-
-                msgs.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = `flex ${m.from === currentUser.uid ? 'justify-end' : 'justify-start'}`;
-                    div.innerHTML = `<div class="px-4 py-2 rounded-2xl text-sm ${m.from === currentUser.uid ? 'bg-primary text-white' : 'bg-white border shadow-sm'}">${m.msg}</div>`;
-                    box.appendChild(div);
-                });
-                box.scrollTop = box.scrollHeight;
-            }, (err) => console.error(err));
-            
-            loadChatList();
-        };
-
-        const loadChatList = async () => {
-            // Demo: List all dummy accounts except self
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
-            const snap = await getDocs(q);
-            const list = document.getElementById('chat-list');
-            list.innerHTML = '';
-            snap.forEach(d => {
-                const u = d.data();
-                if (u.uid === currentUser.uid) return;
-                const item = document.createElement('div');
-                item.className = `p-4 border-b flex items-center gap-3 cursor-pointer hover:bg-slate-50 ${activeChatId === u.uid ? 'bg-blue-50' : ''}`;
-                item.onclick = () => window.openChat(u.uid);
-                item.innerHTML = `
-                    <img src="${u.avatar}" class="w-10 h-10 rounded-xl">
-                    <div><h5 class="font-bold text-sm">${u.shop || u.name}</h5><p class="text-[10px] text-slate-400 uppercase font-bold">${u.role}</p></div>
-                `;
-                list.appendChild(item);
-            });
-        };
-
-        window.handleSendMessage = async (e) => {
-            e.preventDefault();
-            const msg = document.getElementById('chat-input').value;
-            if (!msg.trim() || !activeChatId) return;
-
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), {
-                from: currentUser.uid,
-                to: activeChatId,
-                msg: msg,
-                ts: serverTimestamp()
-            });
-            document.getElementById('chat-input').value = '';
-        };
-
-        // Navigation
-        window.navigate = (page) => {
-            if (page !== 'home' && page !== 'auth' && !currentUser) {
-                navigate('auth');
-                return;
-            }
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('page-' + page).classList.add('active');
-            if (page === 'chat') loadChatList();
-        };
-
-        // UI Utils
-        function showLoading(show) { document.getElementById('loading-screen').classList.toggle('hidden', !show); }
-        function showToast(msg, type = 'success') {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 ${type === 'error' ? 'bg-red-600' : 'bg-dark'} text-white rounded-full font-bold shadow-2xl opacity-100 transition-all z-[300]`;
-            setTimeout(() => t.style.opacity = '0', 3000);
+        // Auth
+        function toggleRegFields(role) {
+            document.getElementById('field-shop-name').classList.toggle('hidden', role !== 'umkm');
         }
 
-        init();
+        function handleAuth(e, type) {
+            e.preventDefault();
+            if(type === 'register') {
+                const name = document.getElementById('reg-name').value;
+                const shop = document.getElementById('reg-shop').value;
+                const email = document.getElementById('reg-email').value;
+                const pass = document.getElementById('reg-pass').value;
+                const role = document.querySelector('input[name="role"]:checked').value;
+
+                if(users.find(u => u.email === email)) return showToast('Email sudah ada!', 'error');
+
+                const newUser = {
+                    id: 'u_' + Date.now(),
+                    name, shop: role === 'umkm' ? shop : '', email, pass, role,
+                    skill: '', desc: '',
+                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(role === 'umkm' ? shop : name)}&background=random`
+                };
+                users.push(newUser);
+                localStorage.setItem('uc_users', JSON.stringify(users));
+                loginUser(newUser);
+            } else {
+                const email = document.getElementById('log-email').value;
+                const pass = document.getElementById('log-pass').value;
+                const user = users.find(u => u.email === email && u.pass === pass);
+                if(user) loginUser(user);
+                else showToast('Email/Password salah!', 'error');
+            }
+        }
+
+        function loginUser(user) {
+            currentUser = user;
+            updateNav();
+            navigate('dashboard');
+            showToast('Selamat Datang!');
+        }
+
+        function logout() {
+            currentUser = null;
+            updateNav();
+            navigate('home');
+        }
+
+        // Navigation
+        function navigate(page) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            if(page === 'dashboard') initDashboard();
+            if(page === 'finance') renderFinance();
+            if(page === 'jobs') initJobsView();
+            if(page === 'chat') renderChatList();
+            if(page === 'profile') initProfile();
+        }
+
+        function toggleAuthTab(tab) {
+            document.getElementById('form-login').classList.toggle('hidden', tab === 'register');
+            document.getElementById('form-register').classList.toggle('hidden', tab === 'login');
+            document.getElementById('tab-login').className = tab === 'login' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-primary' : 'flex-1 py-3 font-bold text-slate-400';
+            document.getElementById('tab-register').className = tab === 'register' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-secondary' : 'flex-1 py-3 font-bold text-slate-400';
+        }
+
+        function updateNav() {
+            const guest = document.getElementById('nav-guest');
+            const user = document.getElementById('nav-user');
+            if(currentUser) {
+                guest.classList.add('hidden');
+                user.classList.remove('hidden');
+                document.getElementById('nav-avatar').src = currentUser.avatar;
+                document.getElementById('nav-finance-btn').classList.toggle('hidden', currentUser.role !== 'umkm');
+            } else {
+                guest.classList.remove('hidden');
+                user.classList.add('hidden');
+            }
+        }
+
+        // Finance
+        function calculateStrategy() {
+            const budget = parseFloat(document.getElementById('calc-budget').value) || 0;
+            const sales = parseFloat(document.getElementById('calc-sales').value) || 0;
+            const price = parseFloat(document.getElementById('calc-price').value) || 0;
+            if(!sales || !price) return showToast('Isi data simulasi!', 'error');
+            const omzet = sales * price;
+            const cogs = omzet * 0.4;
+            const opx = budget * 0.1;
+            const profit = omzet - cogs - opx;
+            document.getElementById('calc-result').classList.remove('hidden');
+            document.getElementById('res-omzet').innerText = 'Rp ' + omzet.toLocaleString();
+            document.getElementById('res-profit').innerText = 'Rp ' + profit.toLocaleString();
+            let strat = profit < 0 ? "Harga jual rendah/biaya tinggi. Naikkan harga 15%." : "Potensial! Tingkatkan volume via sosmed.";
+            document.getElementById('res-strategy').innerText = strat;
+        }
+
+        function addTransaction(e) {
+            e.preventDefault();
+            transactions.push({
+                id: Date.now(), userId: currentUser.id,
+                date: new Date().toLocaleDateString('id-ID'),
+                type: document.getElementById('fin-type').value,
+                amount: parseInt(document.getElementById('fin-amount').value),
+                note: document.getElementById('fin-note').value
+            });
+            localStorage.setItem('uc_finance', JSON.stringify(transactions));
+            e.target.reset();
+            renderFinance();
+            showToast('Tercatat');
+        }
+
+        function renderFinance() {
+            const userTrans = transactions.filter(t => t.userId === currentUser.id);
+            const tbody = document.getElementById('finance-table');
+            let inc = 0, exp = 0;
+            tbody.innerHTML = userTrans.map(t => {
+                if(t.type === 'income') inc += t.amount; else exp += t.amount;
+                return `<tr><td class="py-3 text-[11px]">${t.date}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
+            }).reverse().join('');
+            const profit = inc - exp;
+            document.getElementById('ai-report-text').innerText = userTrans.length > 0 ? (profit > 0 ? `Surplus Rp ${profit.toLocaleString()}. Simpan 20% dana darurat.` : `Defisit Rp ${Math.abs(profit).toLocaleString()}. Evaluasi biaya harian.`) : "Belum ada data.";
+        }
+
+        // Jobs & Applications
+        function initJobsView() {
+            if(currentUser.role === 'umkm') {
+                document.getElementById('jobs-umkm-view').classList.remove('hidden');
+                document.getElementById('jobs-worker-view').classList.add('hidden');
+                renderMyJobs();
+            } else {
+                document.getElementById('jobs-umkm-view').classList.add('hidden');
+                document.getElementById('jobs-worker-view').classList.remove('hidden');
+                filterJobs();
+            }
+        }
+
+        function toggleJobModal(show) { document.getElementById('job-modal').classList.toggle('hidden', !show); }
+
+        function postJob(e) {
+            e.preventDefault();
+            jobs.push({
+                id: 'j_' + Date.now(), userId: currentUser.id, shopName: currentUser.shop,
+                title: document.getElementById('job-title').value,
+                salary: document.getElementById('job-salary').value,
+                location: document.getElementById('job-loc').value,
+                desc: document.getElementById('job-desc').value,
+                avatar: currentUser.avatar
+            });
+            localStorage.setItem('uc_jobs', JSON.stringify(jobs));
+            toggleJobModal(false);
+            renderMyJobs();
+            showToast('Diposting');
+        }
+
+        function applyJob(jobId, employerId) {
+            // Cek apakah sudah melamar sebelumnya
+            const existing = applications.find(a => a.workerId === currentUser.id && a.jobId === jobId);
+            if(existing) return showToast('Anda sudah melamar pekerjaan ini.', 'error');
+
+            applications.push({
+                id: 'app_' + Date.now(),
+                workerId: currentUser.id,
+                employerId: employerId,
+                jobId: jobId,
+                timestamp: Date.now()
+            });
+            localStorage.setItem('uc_apps', JSON.stringify(applications));
+            showToast('Lamaran & Profil Terkirim! Chat kini tersedia.');
+            
+            // Otomatis bisa chat ke pemilik lowongan
+            setTimeout(() => { startChat(employerId); }, 1000);
+        }
+
+        function filterJobs() {
+            const query = document.getElementById('job-search').value.toLowerCase();
+            const grid = currentUser.role === 'umkm' ? document.getElementById('job-grid') : document.getElementById('explore-jobs-grid');
+            const filtered = jobs.filter(j => j.title.toLowerCase().includes(query) || j.shopName.toLowerCase().includes(query));
+            
+            grid.innerHTML = filtered.map(j => `
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="${j.avatar}" class="w-12 h-12 rounded-xl object-cover">
+                        <div><h4 class="font-bold">${j.title}</h4><p class="text-primary text-xs font-bold">${j.shopName}</p></div>
+                    </div>
+                    <p class="text-xs text-slate-500 line-clamp-2 mb-4">${j.desc}</p>
+                    <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
+                </div>
+            `).join('');
+        }
+
+        function renderMyJobs() {
+            const list = document.getElementById('my-jobs-list');
+            const myJobs = jobs.filter(j => j.userId === currentUser.id);
+            list.innerHTML = myJobs.map(j => `<div class="bg-white p-5 rounded-2xl border flex justify-between items-center"><div class="flex items-center gap-4"><div class="w-10 h-10 bg-blue-50 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-briefcase"></i></div><div><h4 class="font-bold">${j.title}</h4><p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">${j.location} • Rp ${j.salary}Jt</p></div></div><button onclick="deleteJob('${j.id}')" class="text-red-400 hover:text-red-600 font-bold text-sm">Hapus</button></div>`).join('');
+        }
+
+        function deleteJob(id) {
+            jobs = jobs.filter(j => j.id !== id);
+            localStorage.setItem('uc_jobs', JSON.stringify(jobs));
+            renderMyJobs();
+        }
+
+        // Chat & Contact Logic
+        function renderChatList() {
+            const list = document.getElementById('chat-users');
+            
+            // Ambil ID orang-orang yang terhubung via lamaran
+            let connectedUserIds = [];
+            if(currentUser.role === 'worker') {
+                // Pekerja melihat UMKM yang mereka lamar
+                connectedUserIds = applications.filter(a => a.workerId === currentUser.id).map(a => a.employerId);
+            } else {
+                // UMKM melihat Pekerja yang melamar ke mereka
+                connectedUserIds = applications.filter(a => a.employerId === currentUser.id).map(a => a.workerId);
+            }
+
+            // Hapus duplikat ID
+            connectedUserIds = [...new Set(connectedUserIds)];
+            const connectedUsers = users.filter(u => connectedUserIds.includes(u.id));
+
+            if(connectedUsers.length === 0) {
+                list.innerHTML = `<div class="p-10 text-center text-slate-400 text-xs italic">Belum ada kontak kerja yang tersedia.</div>`;
+                return;
+            }
+
+            list.innerHTML = connectedUsers.map(u => `
+                <div onclick="openChat('${u.id}')" class="p-4 border-b flex items-center gap-4 cursor-pointer hover:bg-slate-50 ${activeChatId === u.id ? 'bg-blue-50' : ''}">
+                    <img src="${u.avatar}" class="w-10 h-10 rounded-xl object-cover">
+                    <div>
+                        <h5 class="font-bold text-sm">${u.role === 'umkm' ? u.shop : u.name}</h5>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">${u.role}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openChat(id) {
+            activeChatId = id;
+            const target = users.find(u => u.id === id);
+            document.getElementById('chat-active-name').innerText = target.role === 'umkm' ? target.shop : target.name;
+            document.getElementById('chat-active-name').classList.remove('text-slate-400');
+            document.getElementById('chat-input').disabled = false;
+            document.getElementById('chat-btn').disabled = false;
+            document.getElementById('chat-empty-state').classList.add('hidden');
+            renderChatList();
+            renderMessages();
+        }
+
+        function renderMessages() {
+            const box = document.getElementById('chat-box');
+            const relevant = chats.filter(c => (c.from === currentUser.id && c.to === activeChatId) || (c.from === activeChatId && c.to === currentUser.id));
+            box.innerHTML = relevant.map(c => `
+                <div class="flex ${c.from === currentUser.id ? 'justify-end' : 'justify-start'}">
+                    <div class="px-4 py-2 rounded-2xl text-sm ${c.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border shadow-sm'}">${c.msg}</div>
+                </div>
+            `).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            if(!input.value.trim()) return;
+            chats.push({ from: currentUser.id, to: activeChatId, msg: input.value, timestamp: Date.now() });
+            localStorage.setItem('uc_chats', JSON.stringify(chats));
+            input.value = '';
+            renderMessages();
+        }
+
+        function startChat(id) { navigate('chat'); openChat(id); }
+
+        // Profile
+        function initProfile() {
+            document.getElementById('prof-img').src = currentUser.avatar;
+            document.getElementById('prof-name-display').innerText = currentUser.name;
+            document.getElementById('prof-role-display').innerText = currentUser.role;
+            document.getElementById('prof-name').value = currentUser.name;
+            document.getElementById('prof-shop').value = currentUser.shop;
+            document.getElementById('prof-skill').value = currentUser.skill || '';
+            document.getElementById('prof-desc').value = currentUser.desc || '';
+            document.getElementById('prof-field-shop').classList.toggle('hidden', currentUser.role !== 'umkm');
+            document.getElementById('prof-field-skill').classList.toggle('hidden', currentUser.role !== 'worker');
+        }
+
+        function saveProfile() {
+            currentUser.name = document.getElementById('prof-name').value;
+            currentUser.shop = document.getElementById('prof-shop').value;
+            currentUser.skill = document.getElementById('prof-skill').value;
+            currentUser.desc = document.getElementById('prof-desc').value;
+            const idx = users.findIndex(u => u.id === currentUser.id);
+            users[idx] = currentUser;
+            localStorage.setItem('uc_users', JSON.stringify(users));
+            showToast('Profil Disimpan');
+            initProfile();
+        }
+
+        // Utils
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 ${type === 'error' ? 'bg-red-600' : 'bg-dark'} text-white rounded-full font-bold shadow-2xl opacity-100 transition-all z-[200]`;
+            setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 3000);
+        }
+
+        function initDashboard() {
+            document.getElementById('dash-umkm').classList.toggle('hidden', currentUser.role !== 'umkm');
+            document.getElementById('dash-worker').classList.toggle('hidden', currentUser.role !== 'worker');
+            if(currentUser.role === 'umkm') {
+                document.getElementById('dash-shop-name').innerText = currentUser.shop;
+                document.getElementById('dash-owner-name').innerText = currentUser.name;
+                const userTrans = transactions.filter(t => t.userId === currentUser.id);
+                let balance = 0;
+                userTrans.forEach(t => balance += (t.type === 'income' ? t.amount : -t.amount));
+                document.getElementById('dash-balance').innerText = 'Rp ' + balance.toLocaleString();
+                document.getElementById('dash-jobs-count').innerText = jobs.filter(j => j.userId === currentUser.id).length;
+            } else {
+                document.getElementById('worker-name').innerText = currentUser.name;
+                filterJobs();
+            }
+        }
     </script>
 </body>
 </html>
