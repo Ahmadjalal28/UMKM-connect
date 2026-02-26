@@ -34,7 +34,6 @@
         
         .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
 
-        /* AI Content formatting */
         #ai-content b, #ai-content strong, #ai-career-content b { color: #1e40af; }
         #ai-content ul, #ai-career-content ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 1rem; }
     </style>
@@ -119,19 +118,22 @@
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-3">Pilih Peran</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="role" value="umkm" class="hidden peer" checked>
+                                    <input type="radio" name="role" value="umkm" class="hidden peer" checked onclick="toggleRegShopField(true)">
                                     <div class="p-3 text-center border-2 border-slate-100 rounded-xl peer-checked:border-primary peer-checked:bg-blue-50 text-xs font-bold">UMKM</div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="role" value="worker" class="hidden peer">
+                                    <input type="radio" name="role" value="worker" class="hidden peer" onclick="toggleRegShopField(false)">
                                     <div class="p-3 text-center border-2 border-slate-100 rounded-xl peer-checked:border-primary peer-checked:bg-blue-50 text-xs font-bold">PEKERJA</div>
                                 </label>
                             </div>
                         </div>
                         <div class="space-y-3 mb-4">
                             <input type="text" id="reg-name" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary outline-none" placeholder="Nama Lengkap" required>
-                            <div id="field-shop-name">
+                            <div id="reg-shop-field">
                                 <input type="text" id="reg-shop" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary outline-none" placeholder="Nama Toko/Usaha">
+                            </div>
+                            <div id="reg-skill-field" class="hidden">
+                                <input type="text" id="reg-skill" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary outline-none" placeholder="Keahlian (Contoh: Barista, Accounting)">
                             </div>
                             <input type="email" id="reg-email" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary outline-none" placeholder="Email" required>
                             <input type="password" id="reg-pass" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary outline-none" placeholder="Password" required>
@@ -169,7 +171,6 @@
                     </button>
                 </div>
 
-                <!-- AI Career Guide Result Container -->
                 <div id="ai-career-container" class="hidden mb-8 bg-white border-2 border-purple-100 rounded-3xl p-6 shadow-sm">
                     <div id="ai-career-loading" class="flex flex-col items-center py-4">
                         <div class="animate-spin h-8 w-8 border-4 border-purple-500 border-t-transparent rounded-full mb-2"></div>
@@ -247,7 +248,7 @@
             </div>
         </section>
 
-        <!-- JOBS (RECRUITMENT) -->
+        <!-- JOBS -->
         <section id="page-jobs" class="page-section">
             <div id="jobs-umkm-view" class="hidden">
                 <div class="flex justify-between items-center mb-8">
@@ -266,13 +267,14 @@
                 <div class="bg-white p-2 rounded-2xl shadow-sm border mb-8 flex gap-2">
                     <div class="flex-1 flex items-center bg-slate-50 px-5 py-3 rounded-xl">
                         <i class="fas fa-search text-slate-300 mr-3"></i>
-                        <input type="text" id="job-search" onkeyup="renderJobGrid()" placeholder="Cari posisi atau nama UMKM..." class="bg-transparent w-full outline-none text-sm font-medium">
+                        <input type="text" id="job-search" onkeyup="renderJobGrid()" placeholder="Cari posisi atau UMKM..." class="bg-transparent w-full outline-none text-sm font-medium">
                     </div>
                 </div>
                 
                 <div id="job-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
 
+            <!-- Modal Lowongan -->
             <div id="job-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl">
                     <h3 class="text-2xl font-bold mb-6">Posting Lowongan Baru</h3>
@@ -292,7 +294,7 @@
             </div>
         </section>
 
-        <!-- PROFILE (Database & Sync) -->
+        <!-- PROFILE -->
         <section id="page-profile" class="page-section">
             <div class="max-w-2xl mx-auto space-y-8">
                 <div class="bg-white rounded-[2.5rem] shadow-sm border p-8 md:p-12">
@@ -305,59 +307,46 @@
                     </div>
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase">Nama Lengkap / Skill</label>
-                            <input type="text" id="prof-name" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border focus:border-primary">
+                            <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-tighter">Nama Lengkap</label>
+                            <input type="text" id="prof-name" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary transition" placeholder="Masukkan nama Anda">
                         </div>
-                        <div id="prof-field-shop">
-                            <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase">Nama Toko</label>
-                            <input type="text" id="prof-shop" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border focus:border-primary">
+                        <div id="prof-field-skill" class="hidden">
+                            <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-tighter">Keahlian & Bakat (Skill)</label>
+                            <input type="text" id="prof-skill" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary transition" placeholder="Contoh: Desain Grafis, Barista, Microsoft Excel">
                         </div>
-                        <button onclick="handleSaveProfile()" class="w-full bg-secondary text-white py-4 rounded-2xl font-bold shadow-md">Update Profil</button>
+                        <div id="prof-field-shop" class="hidden">
+                            <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-tighter">Nama Toko / UMKM</label>
+                            <input type="text" id="prof-shop" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary transition" placeholder="Masukkan nama usaha">
+                        </div>
+                        <button onclick="handleSaveProfile()" class="w-full bg-secondary text-white py-4 rounded-2xl font-bold shadow-md hover:scale-[1.02] active:scale-95 transition">Update Profil</button>
                     </div>
                 </div>
 
-                <!-- Sinkronisasi Data Manual (Portable Database) -->
-                <div class="bg-slate-900 text-white rounded-[2.5rem] p-8 shadow-xl">
+                <div class="bg-slate-900 text-white rounded-[2.5rem] p-8">
                     <h3 class="font-bold text-lg mb-2 flex items-center gap-2"><i class="fas fa-sync text-primary"></i> Sinkronisasi Antar Device</h3>
-                    <p class="text-slate-400 text-xs mb-6">Salin kode ini untuk memindahkan data (Lowongan, Chat, & User) ke perangkat lain.</p>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button onclick="exportDB()" class="flex-1 bg-slate-800 hover:bg-slate-700 p-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"><i class="fas fa-copy"></i> Salin Kode Database</button>
-                        <button onclick="importDB()" class="flex-1 bg-primary hover:bg-blue-700 p-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"><i class="fas fa-file-import"></i> Tempel Kode Database</button>
+                    <p class="text-slate-400 text-xs mb-6">Gunakan kode ini untuk memindahkan data antar browser secara manual.</p>
+                    <div class="flex gap-2">
+                        <button onclick="exportDB()" class="flex-1 bg-slate-800 hover:bg-slate-700 p-4 rounded-2xl text-xs font-bold transition">Salin Kode DB</button>
+                        <button onclick="importDB()" class="flex-1 bg-primary hover:bg-blue-700 p-4 rounded-2xl text-xs font-bold transition">Tempel Kode DB</button>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- CHAT -->
-        <section id="page-chat" class="page-section h-[75vh]">
+        <section id="page-chat" class="page-section h-[70vh]">
             <div class="bg-white rounded-[2.5rem] shadow-sm border flex h-full overflow-hidden">
-                <!-- Sidebar Chat -->
                 <div class="w-full md:w-80 border-r flex flex-col" id="chat-sidebar">
-                    <div class="p-6 border-b flex justify-between items-center">
-                        <span class="font-bold">Pesan Terkini</span>
-                        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-lg text-[10px] font-bold uppercase" id="chat-role-tag">Role</span>
-                    </div>
-                    <div id="chat-users" class="flex-1 overflow-y-auto custom-scrollbar">
-                        <!-- List users yang bisa di-chat -->
-                    </div>
+                    <div class="p-6 border-b font-bold">Pesan Aktif</div>
+                    <div id="chat-users" class="flex-1 overflow-y-auto"></div>
                 </div>
-                
-                <!-- Jendela Chat -->
                 <div class="hidden md:flex flex-1 flex-col bg-slate-50/30" id="chat-window">
-                    <div id="chat-header" class="p-5 bg-white border-b font-bold flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-200" id="chat-header-avatar"></div>
-                        <span id="chat-header-name">Pilih Kontak</span>
-                    </div>
-                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 custom-scrollbar">
-                        <div class="h-full flex flex-col items-center justify-center text-slate-400">
-                            <i class="fas fa-comments text-4xl mb-4 opacity-20"></i>
-                            <p class="text-sm">Klik salah satu kontak untuk memulai percakapan</p>
-                        </div>
-                    </div>
+                    <div id="chat-header" class="p-5 bg-white border-b font-bold">Pilih Kontak</div>
+                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4"></div>
                     <div class="p-4 bg-white border-t m-4 rounded-[2rem]">
                         <form class="flex gap-2" onsubmit="handleSendMessage(event)">
-                            <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-50 px-6 py-3 rounded-2xl outline-none text-sm focus:bg-white border border-transparent focus:border-primary transition">
-                            <button type="submit" class="bg-primary text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-lg hover:shadow-primary/30 transition active:scale-95"><i class="fas fa-paper-plane"></i></button>
+                            <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-50 px-6 py-3 rounded-2xl outline-none text-sm">
+                            <button type="submit" class="bg-primary text-white w-12 h-12 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
                         </form>
                     </div>
                 </div>
@@ -367,21 +356,20 @@
 
     <!-- Modal Akun Demo -->
     <div id="dummy-modal" class="fixed inset-0 bg-dark/70 backdrop-blur-md z-[101] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl p-8">
-            <h3 class="text-xl font-bold mb-4">Akun Uji Coba</h3>
-            <div class="space-y-3 text-sm mb-6 bg-slate-50 p-4 rounded-2xl border">
-                <p class="flex justify-between"><span>UMKM:</span> <code class="text-primary font-bold">kopi@test.com / 123456</code></p>
-                <p class="flex justify-between"><span>Pekerja:</span> <code class="text-primary font-bold">budi@test.com / 123456</code></p>
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl p-6">
+            <h3 class="text-xl font-bold mb-4">Akun Demo</h3>
+            <div class="space-y-2 text-sm mb-6">
+                <p><b>UMKM:</b> kopi@test.com / 123456</p>
+                <p><b>Pekerja:</b> budi@test.com / 123456</p>
             </div>
-            <p class="text-[10px] text-slate-400 mb-6 italic">*Gunakan salah satu untuk masuk. Gunakan fitur Sinkronisasi di Profil untuk memindahkan riwayat chat ke device lain.</p>
-            <button onclick="closeDummyModal()" class="w-full py-4 bg-dark text-white rounded-2xl font-bold">Mengerti</button>
+            <button onclick="closeDummyModal()" class="w-full py-4 bg-dark text-white rounded-2xl font-bold">Tutup</button>
         </div>
     </div>
 
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-dark text-white rounded-2xl font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[200] text-sm"></div>
 
     <script>
-        // Database Helper
+        // Database
         const DB = {
             get: (key) => JSON.parse(localStorage.getItem(`umkm_v2_${key}`)) || [],
             set: (key, data) => localStorage.setItem(`umkm_v2_${key}`, JSON.stringify(data)),
@@ -392,7 +380,6 @@
             }
         };
 
-        // Global State
         let currentUser = DB.session.get();
         let allUsers = DB.get('users');
         let allJobs = DB.get('jobs');
@@ -400,7 +387,6 @@
         let allChats = DB.get('chats');
         let activeChatId = null;
 
-        // API Helper (Gemini)
         const callAI = async (promptText) => {
             const apiKey = ""; 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -415,7 +401,6 @@
             } catch (e) { return null; }
         };
 
-        // Seed Data
         const seed = () => {
             if (allUsers.length === 0) {
                 allUsers = [
@@ -430,7 +415,6 @@
             }
         };
 
-        // Navigation
         window.navigate = (page) => {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
@@ -456,45 +440,44 @@
             }
         };
 
-        // --- AUTH ---
+        // Auth
         window.toggleAuthTab = (t) => {
-            document.getElementById('tab-login').className = `flex-1 py-3 font-bold rounded-2xl transition-all ${t === 'login' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`;
-            document.getElementById('tab-register').className = `flex-1 py-3 font-bold rounded-2xl transition-all ${t === 'register' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`;
             document.getElementById('form-login').classList.toggle('hidden', t === 'register');
             document.getElementById('form-register').classList.toggle('hidden', t === 'login');
         };
 
+        window.toggleRegShopField = (isUmkm) => {
+            document.getElementById('reg-shop-field').classList.toggle('hidden', !isUmkm);
+            document.getElementById('reg-skill-field').classList.toggle('hidden', isUmkm);
+        };
+
         window.handleAuthAction = (e, t) => {
             e.preventDefault();
-            const email = t === 'login' ? document.getElementById('log-email').value : document.getElementById('reg-email').value;
-            const pass = t === 'login' ? document.getElementById('log-pass').value : document.getElementById('reg-pass').value;
-
             if (t === 'login') {
+                const email = document.getElementById('log-email').value;
+                const pass = document.getElementById('log-pass').value;
                 const found = allUsers.find(u => u.email === email && u.pass === pass);
                 if (found) { currentUser = found; DB.session.set(found); updateNav(); navigate('dashboard'); }
                 else showToast('Email atau password salah', 'error');
             } else {
                 const role = document.querySelector('input[name="role"]:checked').value;
-                const name = document.getElementById('reg-name').value;
-                const shop = document.getElementById('reg-shop').value;
                 const newUser = { 
                     id: 'u_' + Date.now(), 
-                    email, pass, name, role, 
-                    shop: role === 'umkm' ? shop : '', 
-                    avatar: `https://ui-avatars.com/api/?name=${name}&background=random` 
+                    email: document.getElementById('reg-email').value, 
+                    pass: document.getElementById('reg-pass').value, 
+                    name: document.getElementById('reg-name').value, 
+                    role, 
+                    shop: role === 'umkm' ? document.getElementById('reg-shop').value : '',
+                    skill: role === 'worker' ? document.getElementById('reg-skill').value : '',
+                    avatar: `https://ui-avatars.com/api/?name=${document.getElementById('reg-name').value}&background=random` 
                 };
-                allUsers.push(newUser); 
-                DB.set('users', allUsers); 
-                currentUser = newUser; 
-                DB.session.set(newUser); 
-                updateNav(); 
-                navigate('dashboard');
+                allUsers.push(newUser); DB.set('users', allUsers); currentUser = newUser; DB.session.set(newUser); updateNav(); navigate('dashboard');
             }
         };
 
         window.handleLogout = () => { currentUser = null; DB.session.clear(); updateNav(); navigate('home'); };
 
-        // --- DASHBOARD ---
+        // Dashboard
         const initDashboard = () => {
             document.getElementById('dash-umkm').classList.toggle('hidden', currentUser.role !== 'umkm');
             document.getElementById('dash-worker').classList.toggle('hidden', currentUser.role !== 'worker');
@@ -509,28 +492,65 @@
             }
         };
 
-        // --- AI CAREER ---
+        // AI Career
         window.handleAICareerGuide = async () => {
             const container = document.getElementById('ai-career-container');
             const content = document.getElementById('ai-career-content');
             const loading = document.getElementById('ai-career-loading');
-            
             container.classList.remove('hidden');
             loading.classList.remove('hidden');
             content.innerHTML = '';
 
-            const prompt = `Anda adalah konsultan HR Digital. Pekerja bernama ${currentUser.name} memiliki keahlian: "${currentUser.skill || 'Umum'}".
-            Berikan analisis minat & bakat dalam 3 poin HTML sederhana:
-            1. Bidang yang paling cocok.
-            2. Kelebihan bakat tersebut.
-            3. Rekomendasi 2 posisi.`;
-
+            const prompt = `Anda adalah konsultan HR. Pekerja ${currentUser.name} punya skill: "${currentUser.skill || 'Umum'}". Analisis 3 hal (Format HTML): 1. Bidang cocok 2. Kelebihan 3. Rekomendasi posisi. JANGAN gunakan markdown blocks.`;
             const res = await callAI(prompt);
             loading.classList.add('hidden');
-            content.innerHTML = res ? res.replace(/\*\*/g, '') : 'Gagal memuat analisis.';
+            content.innerHTML = res ? res.replace(/\*\*/g, '') : 'AI sedang sibuk.';
         };
 
-        // --- JOBS ---
+        // Profile Management
+        const initProfile = () => {
+            document.getElementById('prof-img').src = currentUser.avatar;
+            document.getElementById('prof-name-display').innerText = currentUser.name;
+            document.getElementById('prof-role-display').innerText = currentUser.role;
+            
+            document.getElementById('prof-name').value = currentUser.name;
+            
+            // Toggle Fields Based on Role
+            const skillField = document.getElementById('prof-field-skill');
+            const shopField = document.getElementById('prof-field-shop');
+            
+            if (currentUser.role === 'worker') {
+                skillField.classList.remove('hidden');
+                shopField.classList.add('hidden');
+                document.getElementById('prof-skill').value = currentUser.skill || '';
+            } else {
+                skillField.classList.add('hidden');
+                shopField.classList.remove('hidden');
+                document.getElementById('prof-shop').value = currentUser.shop || '';
+            }
+        };
+
+        window.handleSaveProfile = () => {
+            const name = document.getElementById('prof-name').value;
+            const skill = document.getElementById('prof-skill').value;
+            const shop = document.getElementById('prof-shop').value;
+
+            currentUser.name = name;
+            if (currentUser.role === 'worker') {
+                currentUser.skill = skill;
+            } else {
+                currentUser.shop = shop;
+            }
+
+            allUsers = allUsers.map(u => u.id === currentUser.id ? currentUser : u);
+            DB.set('users', allUsers);
+            DB.session.set(currentUser);
+            showToast('Profil berhasil disimpan');
+            initProfile();
+            updateNav();
+        };
+
+        // Job Logic
         window.renderJobGrid = () => {
             const grid = document.getElementById('job-grid');
             if (!grid) return;
@@ -543,93 +563,41 @@
                         <div><h4 class="font-bold text-sm">${j.title}</h4><p class="text-[10px] text-primary font-bold uppercase">${j.shopName}</p></div>
                     </div>
                     <div class="text-xs text-slate-500 mb-4">${j.location} • Rp ${j.salary}Jt</div>
-                    <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold transition active:scale-95">Lamar Sekarang</button>
+                    <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
                 </div>
             `).join('');
         };
 
         window.renderJobManagement = () => {
-            document.getElementById('jobs-umkm-view').classList.add('hidden');
-            document.getElementById('jobs-worker-view').classList.add('hidden');
+            document.getElementById('jobs-umkm-view').classList.toggle('hidden', currentUser.role !== 'umkm');
+            document.getElementById('jobs-worker-view').classList.toggle('hidden', currentUser.role !== 'worker');
 
             if (currentUser.role === 'umkm') {
-                document.getElementById('jobs-umkm-view').classList.remove('hidden');
                 const list = document.getElementById('my-jobs-list');
-                const myJobs = allJobs.filter(j => j.userId === currentUser.id);
-                list.innerHTML = myJobs.map(j => `
-                    <div class="bg-white p-5 rounded-2xl border flex justify-between items-center shadow-sm">
+                list.innerHTML = allJobs.filter(j => j.userId === currentUser.id).map(j => `
+                    <div class="bg-white p-5 rounded-2xl border flex justify-between items-center">
                         <div><h4 class="font-bold text-sm">${j.title}</h4><p class="text-[10px] text-slate-400">${j.location}</p></div>
-                        <button onclick="deleteJob('${j.id}')" class="text-red-400 p-2 hover:bg-red-50 rounded-xl transition"><i class="fas fa-trash"></i></button>
+                        <button onclick="deleteJob('${j.id}')" class="text-red-400 p-2"><i class="fas fa-trash"></i></button>
                     </div>
                 `).join('');
-            } else {
-                document.getElementById('jobs-worker-view').classList.remove('hidden');
-                renderJobGrid();
-            }
+            } else { renderJobGrid(); }
         };
 
         window.handlePostJob = (e) => {
             e.preventDefault();
-            const newJob = {
-                id: 'j_' + Date.now(),
-                userId: currentUser.id,
-                shopName: currentUser.shop,
-                title: document.getElementById('job-title').value,
-                salary: document.getElementById('job-salary').value,
-                location: document.getElementById('job-loc').value,
-                desc: document.getElementById('job-desc').value,
-                avatar: currentUser.avatar
-            };
-            allJobs.push(newJob);
-            DB.set('jobs', allJobs);
-            toggleJobModal(false);
-            showToast('Lowongan diterbitkan!');
-            renderJobManagement();
+            const newJob = { id: 'j_' + Date.now(), userId: currentUser.id, shopName: currentUser.shop, title: document.getElementById('job-title').value, salary: document.getElementById('job-salary').value, location: document.getElementById('job-loc').value, desc: document.getElementById('job-desc').value, avatar: currentUser.avatar };
+            allJobs.push(newJob); DB.set('jobs', allJobs); toggleJobModal(false); showToast('Berhasil diterbitkan'); renderJobManagement();
         };
 
-        window.deleteJob = (id) => {
-            allJobs = allJobs.filter(j => j.id !== id);
-            DB.set('jobs', allJobs);
-            renderJobManagement();
-        };
-
+        window.deleteJob = (id) => { allJobs = allJobs.filter(j => j.id !== id); DB.set('jobs', allJobs); renderJobManagement(); };
         window.toggleJobModal = (s) => document.getElementById('job-modal').classList.toggle('hidden', !s);
-
         window.applyJob = (jobId, empId) => {
-            const exists = allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id);
-            if (exists) return showToast('Sudah dilamar', 'error');
-            allApps.push({ jobId, employerId: empId, workerId: currentUser.id });
-            DB.set('applications', allApps);
-            showToast('Lamaran dikirim. Hubungi owner lewat Chat.');
-            
-            // Auto-initiate chat if first time
-            const existingChat = allChats.find(c => (c.from === currentUser.id && c.to === empId) || (c.from === empId && c.to === currentUser.id));
-            if (!existingChat) {
-                allChats.push({ from: currentUser.id, to: empId, msg: `Halo! Saya tertarik melamar posisi di toko Anda.`, time: Date.now() });
-                DB.set('chats', allChats);
-            }
-            navigate('chat');
+            if (allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id)) return showToast('Sudah dilamar', 'error');
+            allApps.push({ jobId, employerId: empId, workerId: currentUser.id }); DB.set('applications', allApps); showToast('Lamaran dikirim'); navigate('chat');
         };
 
-        // --- FINANCE ---
-        window.handleGenerateFinanceAI = async () => {
-            const container = document.getElementById('ai-finance-result');
-            const content = document.getElementById('ai-content');
-            const btn = document.getElementById('btn-ai-finance');
-            
-            container.classList.remove('hidden');
-            content.innerHTML = '<p class="text-xs animate-pulse">Menganalisis data...</p>';
-            btn.disabled = true;
-
-            const trans = DB.get(`finance_${currentUser.id}`);
-            const prompt = `Analisis keuangan UMKM: ${JSON.stringify(trans)}. Berikan Analisis Profit & Saran Budget. HTML sederhana.`;
-            const res = await callAI(prompt);
-            content.innerHTML = res ? res.replace(/\*\*/g, '') : 'Gagal.';
-            btn.disabled = false;
-        };
-
+        // Finance View
         const renderFinanceView = () => {
-            if (currentUser.role !== 'umkm') return;
             const trans = DB.get(`finance_${currentUser.id}`);
             const tbody = document.getElementById('finance-table');
             let bal = 0;
@@ -637,154 +605,57 @@
                 bal += (t.type === 'income' ? t.amount : -t.amount);
                 return `<tr><td class="py-3 text-[10px] text-slate-400">${t.date}</td><td class="py-3">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">Rp ${t.amount.toLocaleString()}</td></tr>`;
             }).join('');
-            document.getElementById('dash-balance').innerText = 'Rp ' + bal.toLocaleString();
+            if (document.getElementById('dash-balance')) document.getElementById('dash-balance').innerText = 'Rp ' + bal.toLocaleString();
         };
 
         window.handleAddTransaction = (e) => {
             e.preventDefault();
             const trans = DB.get(`finance_${currentUser.id}`);
             trans.push({ type: document.getElementById('fin-type').value, amount: parseInt(document.getElementById('fin-amount').value), note: document.getElementById('fin-note').value, date: new Date().toLocaleDateString() });
-            DB.set(`finance_${currentUser.id}`, trans);
-            e.target.reset();
-            renderFinanceView();
+            DB.set(`finance_${currentUser.id}`, trans); e.target.reset(); renderFinanceView();
         };
 
-        // --- SYNC ENGINE (Multi-Device Local) ---
-        window.exportDB = () => {
-            // Kita ekspor semua data penting termasuk Chat
-            const data = { 
-                jobs: allJobs, 
-                users: allUsers, 
-                apps: allApps, 
-                chats: allChats 
-            };
-            const code = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-            navigator.clipboard.writeText(code);
-            showToast('Data & Riwayat Chat disalin ke clipboard!');
+        // Finance AI
+        window.handleGenerateFinanceAI = async () => {
+            const container = document.getElementById('ai-finance-result');
+            const content = document.getElementById('ai-content');
+            container.classList.remove('hidden');
+            content.innerHTML = '<p class="text-xs animate-pulse">Menganalisis...</p>';
+            const trans = DB.get(`finance_${currentUser.id}`);
+            const res = await callAI(`Analisis data kas UMKM: ${JSON.stringify(trans)}. Berikan Analisis Profit dan Saran (Format HTML).`);
+            content.innerHTML = res ? res.replace(/\*\*/g, '') : 'Gagal memproses.';
         };
 
-        window.importDB = () => {
-            const code = prompt("Tempel kode sinkronisasi di sini:");
-            if (code) {
-                try {
-                    const data = JSON.parse(decodeURIComponent(escape(atob(code))));
-                    if (data.users) {
-                        allJobs = data.jobs || allJobs; DB.set('jobs', allJobs);
-                        allUsers = data.users || allUsers; DB.set('users', allUsers);
-                        allApps = data.apps || allApps; DB.set('applications', allApps);
-                        allChats = data.chats || allChats; DB.set('chats', allChats);
-                        showToast('Database Sinkron!');
-                        location.reload();
-                    }
-                } catch(e) { showToast('Kode tidak valid', 'error'); }
-            }
-        };
-
-        // --- CHAT ENGINE IMPROVED ---
-        window.renderChatList = () => {
-            const list = document.getElementById('chat-users');
-            document.getElementById('chat-role-tag').innerText = currentUser.role === 'umkm' ? 'Pelaku UMKM' : 'Pencari Kerja';
-            
-            // Ambil semua ID user yang pernah berinteraksi chat dengan user saat ini
-            const interactedUserIds = [...new Set(allChats.filter(c => c.from === currentUser.id || c.to === currentUser.id).map(c => c.from === currentUser.id ? c.to : c.from))];
-            
-            const users = allUsers.filter(u => interactedUserIds.includes(u.id));
-            
-            if (users.length === 0) {
-                list.innerHTML = `<div class="p-10 text-center text-slate-400 text-xs italic">Belum ada percakapan. Mulai dengan melamar pekerjaan.</div>`;
-                return;
-            }
-
-            list.innerHTML = users.map(u => `
-                <div onclick="openChat('${u.id}')" class="p-4 border-b hover:bg-slate-50 cursor-pointer flex items-center gap-3 transition ${activeChatId === u.id ? 'bg-blue-50 border-l-4 border-l-primary' : ''}">
-                    <img src="${u.avatar}" class="w-10 h-10 rounded-full border border-white shadow-sm">
-                    <div class="flex-1 overflow-hidden">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <span class="text-sm font-bold truncate">${u.role === 'umkm' ? u.shop : u.name}</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 truncate uppercase tracking-tighter">${u.role}</p>
-                    </div>
-                </div>
-            `).join('');
-        };
-
-        window.openChat = (id) => {
-            activeChatId = id;
-            const target = allUsers.find(u => u.id === id);
-            document.getElementById('chat-window').classList.remove('hidden');
-            document.getElementById('chat-header-name').innerText = target.role === 'umkm' ? target.shop : target.name;
-            document.getElementById('chat-header-avatar').innerHTML = `<img src="${target.avatar}" class="w-full h-full rounded-full">`;
-            
-            renderMessages();
-            renderChatList(); // Update highlight
-        };
-
-        const renderMessages = () => {
-            if (!activeChatId) return;
-            const chatBox = document.getElementById('chat-box');
-            const msgs = allChats.filter(c => (c.from === currentUser.id && c.to === activeChatId) || (c.to === currentUser.id && c.from === activeChatId));
-            
-            chatBox.innerHTML = msgs.map(m => `
-                <div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}">
-                    <div class="max-w-[80%]">
-                        <div class="p-3 rounded-2xl text-xs shadow-sm ${m.from === currentUser.id ? 'bg-primary text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}">
-                            ${m.msg}
-                        </div>
-                        <p class="text-[8px] mt-1 text-slate-400 ${m.from === currentUser.id ? 'text-right' : 'text-left'}">${new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                    </div>
-                </div>
-            `).join('');
-            chatBox.scrollTop = chatBox.scrollHeight;
-        };
-
-        window.handleSendMessage = (e) => {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const val = input.value.trim();
-            if(!val || !activeChatId) return;
-            
-            allChats.push({ from: currentUser.id, to: activeChatId, msg: val, time: Date.now() });
-            DB.set('chats', allChats);
-            input.value = '';
-            renderMessages();
-        };
-
-        // --- PROFILE ---
-        const initProfile = () => {
-            document.getElementById('prof-img').src = currentUser.avatar;
-            document.getElementById('prof-name-display').innerText = currentUser.name;
-            document.getElementById('prof-role-display').innerText = currentUser.role;
-            document.getElementById('prof-name').value = currentUser.name;
-            document.getElementById('prof-shop').value = currentUser.shop || '';
-            document.getElementById('prof-field-shop').classList.toggle('hidden', currentUser.role !== 'umkm');
-        };
-
-        window.handleSaveProfile = () => {
-            currentUser.name = document.getElementById('prof-name').value;
-            currentUser.skill = document.getElementById('prof-name').value; 
-            currentUser.shop = document.getElementById('prof-shop').value;
-            allUsers = allUsers.map(u => u.id === currentUser.id ? currentUser : u);
-            DB.set('users', allUsers);
-            DB.session.set(currentUser);
-            showToast('Profil diperbarui');
-            initProfile();
-        };
-
-        // --- COMMON ---
+        // Utils
         window.showToast = (m, t = 'success') => {
-            const toast = document.getElementById('toast');
-            toast.innerText = m;
+            const toast = document.getElementById('toast'); toast.innerText = m;
             toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 rounded-2xl font-bold shadow-2xl transition-all z-[200] text-sm ${t === 'error' ? 'bg-red-500 text-white' : 'bg-dark text-white'}`;
-            toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 3000);
+            toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 3000);
         };
-
         window.openDummyModal = () => document.getElementById('dummy-modal').classList.remove('hidden');
         window.closeDummyModal = () => document.getElementById('dummy-modal').classList.add('hidden');
+        window.exportDB = () => { navigator.clipboard.writeText(btoa(JSON.stringify({ jobs: allJobs, users: allUsers, apps: allApps }))); showToast('Kode disalin'); };
+        window.importDB = () => { const code = prompt("Tempel kode:"); if (code) { try { const data = JSON.parse(atob(code)); allJobs = data.jobs; DB.set('jobs', allJobs); allUsers = data.users; DB.set('users', allUsers); allApps = data.apps; DB.set('applications', allApps); location.reload(); } catch(e) { showToast('Gagal', 'error'); } } };
+
+        // Chat
+        const renderChatList = () => {
+            const connectedIds = [...new Set(allApps.filter(a => a.workerId === currentUser.id || a.employerId === currentUser.id).map(a => a.workerId === currentUser.id ? a.employerId : a.workerId))];
+            document.getElementById('chat-users').innerHTML = allUsers.filter(u => connectedIds.includes(u.id)).map(u => `<div onclick="openChat('${u.id}')" class="p-4 border-b hover:bg-slate-50 cursor-pointer flex items-center gap-3"><img src="${u.avatar}" class="w-8 h-8 rounded-full"><span class="text-sm font-bold">${u.role === 'umkm' ? u.shop : u.name}</span></div>`).join('');
+        };
+        window.openChat = (id) => {
+            activeChatId = id; document.getElementById('chat-window').classList.remove('hidden');
+            const msgs = allChats.filter(c => (c.from === currentUser.id && c.to === id) || (c.to === currentUser.id && c.from === id));
+            document.getElementById('chat-box').innerHTML = msgs.map(m => `<div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}"><div class="p-3 rounded-xl text-xs ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div></div>`).join('');
+        };
+        window.handleSendMessage = (e) => {
+            e.preventDefault(); const val = document.getElementById('chat-input').value; if(!val || !activeChatId) return;
+            allChats.push({ from: currentUser.id, to: activeChatId, msg: val, time: Date.now() }); DB.set('chats', allChats);
+            document.getElementById('chat-input').value = ''; openChat(activeChatId);
+        };
 
         seed();
-        initApp = () => { updateNav(); if (currentUser) navigate('dashboard'); else navigate('home'); };
-        initApp();
+        updateNav();
+        if (currentUser) navigate('dashboard');
     </script>
 </body>
 </html>
