@@ -24,127 +24,147 @@
         }
     </script>
     <style>
-        body { background-color: #f8fafc; color: #334155; }
+        body { background-color: #f8fafc; color: #334155; overflow-x: hidden; }
         .page-section { display: none; animation: slideUp 0.3s ease-out; }
         .page-section.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Landscape Optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            nav { height: 3.5rem; }
+            nav .h-16 { height: 3.5rem; }
+            .py-16 { padding-top: 2rem; padding-bottom: 2rem; }
+            .text-5xl { font-size: 2.5rem; }
+            main { padding-top: 1rem; }
+            .h-\[70vh\] { height: 85vh; }
+        }
+
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+
+        /* AI Content formatting */
+        #ai-content b, #ai-content strong { color: #1e40af; }
+        #ai-content ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 1rem; }
+        #ai-content li { margin-bottom: 0.25rem; }
     </style>
 </head>
 <body>
 
     <!-- Navigation -->
-    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
+    <nav class="glass-effect shadow-sm sticky top-0 z-50 border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center cursor-pointer" onclick="navigate('home')">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-blue-700 rounded-xl flex items-center justify-center text-white mr-3 shadow-lg">
-                        <i class="fas fa-hands-helping"></i>
+                    <div class="w-9 h-9 bg-gradient-to-br from-primary to-blue-700 rounded-xl flex items-center justify-center text-white mr-3 shadow-lg">
+                        <i class="fas fa-hands-helping text-sm"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-dark">UMKM <span class="text-primary">Connect</span></span>
+                    <span class="font-bold text-lg tracking-tight text-dark">UMKM <span class="text-primary">Connect</span></span>
                 </div>
 
-                <div id="nav-user" class="hidden flex items-center space-x-1 sm:space-x-4">
-                    <button onclick="navigate('dashboard')" class="p-2 text-slate-500 hover:text-primary transition" title="Dashboard"><i class="fas fa-th-large text-lg"></i></button>
-                    <button id="nav-jobs-btn" onclick="navigate('jobs')" class="p-2 text-slate-500 hover:text-primary transition" title="Lowongan"><i class="fas fa-briefcase text-lg"></i></button>
-                    <button id="nav-finance-btn" class="hidden p-2 text-slate-500 hover:text-primary transition" onclick="navigate('finance')" title="Keuangan"><i class="fas fa-calculator text-lg"></i></button>
-                    <button onclick="navigate('chat')" class="p-2 text-slate-500 hover:text-primary transition relative" title="Pesan">
-                        <i class="fas fa-comments text-lg"></i>
+                <div id="nav-user" class="hidden flex items-center space-x-1 sm:space-x-2">
+                    <button onclick="navigate('dashboard')" class="p-2 text-slate-500 hover:text-primary transition" title="Dashboard"><i class="fas fa-th-large"></i></button>
+                    <button id="nav-jobs-btn" onclick="navigate('jobs')" class="p-2 text-slate-500 hover:text-primary transition" title="Lowongan"><i class="fas fa-briefcase"></i></button>
+                    <button id="nav-finance-btn" class="hidden p-2 text-slate-500 hover:text-primary transition" onclick="navigate('finance')" title="Keuangan"><i class="fas fa-calculator"></i></button>
+                    <button onclick="navigate('chat')" class="p-2 text-slate-500 hover:text-primary transition" title="Pesan"><i class="fas fa-comments"></i></button>
+                    <div class="h-6 w-px bg-slate-200 mx-2"></div>
+                    <button onclick="navigate('profile')" class="flex items-center">
+                        <img id="nav-avatar" src="" class="w-8 h-8 rounded-full border border-primary/20 object-cover hover:ring-2 ring-primary/30 transition">
                     </button>
-                    <div class="h-8 w-px bg-slate-200 mx-2"></div>
-                    <button onclick="navigate('profile')" class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-100 transition">
-                        <img id="nav-avatar" src="" class="w-8 h-8 rounded-full border border-primary/20 object-cover">
-                    </button>
-                    <button onclick="handleLogout()" class="p-2 text-red-400 hover:text-red-600 transition"><i class="fas fa-power-off"></i></button>
+                    <button onclick="handleLogout()" class="p-2 text-red-400 hover:text-red-600 transition"><i class="fas fa-power-off text-sm"></i></button>
                 </div>
 
-                <div id="nav-guest" class="flex items-center space-x-4">
-                    <button onclick="navigate('auth')" class="text-slate-600 font-medium hover:text-primary">Masuk</button>
-                    <button onclick="navigate('auth')" class="bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Mulai Sekarang</button>
+                <div id="nav-guest" class="flex items-center space-x-3">
+                    <button onclick="openDummyModal()" class="text-slate-400 hover:text-primary p-2 transition" title="Info Akun Demo">
+                        <i class="fas fa-info-circle text-xl"></i>
+                    </button>
+                    <button onclick="navigate('auth')" class="hidden sm:block text-slate-600 font-semibold hover:text-primary text-sm">Masuk</button>
+                    <button onclick="navigate('auth')" class="bg-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-md transition">Mulai</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
 
         <!-- LANDING PAGE -->
-        <section id="page-home" class="page-section active text-center py-16">
-            <h1 class="text-5xl md:text-6xl font-extrabold text-dark mb-6 leading-tight">
-                Empower Your <span class="text-primary">Small Business</span> <br>with Local Talents.
-            </h1>
-            <p class="text-lg text-slate-500 max-w-2xl mx-auto mb-10">Platform manajemen usaha, laporan keuangan cerdas, dan rekrutmen talenta lokal dalam satu aplikasi.</p>
-            <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl max-w-lg mx-auto mb-10 text-sm">
-                <p class="font-bold text-blue-800 mb-2">Akun Dummy Tersedia (Data Lokal):</p>
-                <ul class="text-blue-700 space-y-1 text-left list-disc list-inside">
-                    <li><b>UMKM 1:</b> kopi@test.com / 123456</li>
-                    <li><b>UMKM 2:</b> warung@test.com / 123456</li>
-                    <li><b>Pekerja 1:</b> budi@test.com / 123456</li>
-                    <li><b>Pekerja 2:</b> ani@test.com / 123456</li>
-                </ul>
+        <section id="page-home" class="page-section active text-center py-10 md:py-20">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-primary text-xs font-bold mb-6 border border-blue-100">
+                <span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                Digitalisasi UMKM Indonesia
             </div>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button onclick="navigate('auth')" class="bg-primary text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all">Temukan Karir</button>
-                <button onclick="navigate('auth')" class="bg-white text-dark border border-slate-200 px-10 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition-all">Kelola UMKM</button>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-dark mb-6 leading-tight">
+                Pemberdayaan <span class="text-primary">Bisnis Lokal</span> <br class="hidden md:block"> Melalui Talenta Terbaik.
+            </h1>
+            <p class="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mb-10 px-4">
+                Platform all-in-one: Manajemen operasional, pencatatan keuangan otomatis, dan rekrutmen pekerja lokal dalam satu genggaman.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 px-6">
+                <button onclick="navigate('auth')" class="w-full sm:w-auto bg-primary text-white px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-xl hover:-translate-y-1 transition-all">Temukan Karir</button>
+                <button onclick="navigate('auth')" class="w-full sm:w-auto bg-white text-dark border border-slate-200 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">Kelola UMKM</button>
+            </div>
+
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500 max-w-4xl mx-auto px-4">
+                <div class="flex items-center justify-center gap-2 font-bold text-sm"><i class="fas fa-shield-alt"></i> Aman</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-sm"><i class="fas fa-bolt"></i> Cepat</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-sm"><i class="fas fa-users"></i> Lokal</div>
+                <div class="flex items-center justify-center gap-2 font-bold text-sm"><i class="fas fa-check-circle"></i> Terpercaya</div>
             </div>
         </section>
 
         <!-- AUTH PAGE -->
         <section id="page-auth" class="page-section">
-            <div class="max-w-md mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
-                <div class="flex p-2 bg-slate-50 gap-2">
+            <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden">
+                <div class="flex p-2 bg-slate-50 gap-2 m-4 rounded-3xl">
                     <button id="tab-login" class="flex-1 py-3 font-bold rounded-2xl transition-all bg-white shadow-sm text-primary" onclick="toggleAuthTab('login')">Masuk</button>
                     <button id="tab-register" class="flex-1 py-3 font-bold rounded-2xl transition-all text-slate-400" onclick="toggleAuthTab('register')">Daftar</button>
                 </div>
-                <div class="p-8">
+                <div class="p-8 pt-4">
                     <form id="form-login" onsubmit="handleAuthAction(event, 'login')">
+                        <div class="mb-4 text-center">
+                            <h3 class="text-xl font-bold text-dark">Selamat Datang Kembali</h3>
+                            <p class="text-sm text-slate-400">Silakan masuk ke akun Anda</p>
+                        </div>
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
-                            <input type="email" id="log-email" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="anda@email.com" required>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Alamat Email</label>
+                            <input type="email" id="log-email" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary focus:bg-white outline-none transition-all" placeholder="anda@email.com" required>
                         </div>
                         <div class="mb-6">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
-                            <input type="password" id="log-pass" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="••••••••" required>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Kata Sandi</label>
+                            <input type="password" id="log-pass" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary focus:bg-white outline-none transition-all" placeholder="••••••••" required>
                         </div>
-                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg transition-all">Masuk</button>
+                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all">Akses Dashboard</button>
                     </form>
 
                     <form id="form-register" class="hidden" onsubmit="handleAuthAction(event, 'register')">
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Peran Akun</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <label class="cursor-pointer">
+                        <div class="mb-6">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-1">Pilih Peran Anda</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="cursor-pointer group">
                                     <input type="radio" name="role" value="umkm" class="hidden peer" checked>
-                                    <div class="p-3 text-center border-2 border-slate-100 rounded-2xl peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary">
-                                        <i class="fas fa-store mb-1 block"></i> <span class="text-sm font-bold">UMKM</span>
+                                    <div class="p-4 text-center border-2 border-slate-100 rounded-2xl group-hover:border-blue-100 peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary transition-all">
+                                        <i class="fas fa-store mb-1 block text-lg"></i> <span class="text-xs font-bold uppercase">UMKM</span>
                                     </div>
                                 </label>
-                                <label class="cursor-pointer">
+                                <label class="cursor-pointer group">
                                     <input type="radio" name="role" value="worker" class="hidden peer">
-                                    <div class="p-3 text-center border-2 border-slate-100 rounded-2xl peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary">
-                                        <i class="fas fa-user-tie mb-1 block"></i> <span class="text-sm font-bold">Pekerja</span>
+                                    <div class="p-4 text-center border-2 border-slate-100 rounded-2xl group-hover:border-blue-100 peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary transition-all">
+                                        <i class="fas fa-user-tie mb-1 block text-lg"></i> <span class="text-xs font-bold uppercase">Pekerja</span>
                                     </div>
                                 </label>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Lengkap</label>
-                            <input type="text" id="reg-name" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
+                        <div class="grid grid-cols-1 gap-4 mb-4">
+                            <input type="text" id="reg-name" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary focus:bg-white outline-none" placeholder="Nama Lengkap" required>
+                            <div id="field-shop-name">
+                                <input type="text" id="reg-shop" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary focus:bg-white outline-none" placeholder="Nama Toko (Contoh: Kopi Senja)">
+                            </div>
+                            <input type="email" id="reg-email" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary focus:bg-white outline-none" placeholder="Email Aktif" required>
+                            <input type="password" id="reg-pass" class="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-2xl focus:border-primary focus:bg-white outline-none" placeholder="Password" required>
                         </div>
-                        <div id="field-shop-name" class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Toko/Usaha</label>
-                            <input type="text" id="reg-shop" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="Contoh: Kopi Senja">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
-                            <input type="email" id="reg-email" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
-                        </div>
-                        <div class="mb-6">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
-                            <input type="password" id="reg-pass" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
-                        </div>
-                        <button type="submit" class="w-full bg-secondary text-white py-4 rounded-2xl font-bold shadow-lg transition-all">Buat Akun</button>
+                        <button type="submit" class="w-full bg-secondary text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-emerald-600 transition-all">Buat Akun Sekarang</button>
                     </form>
                 </div>
             </div>
@@ -153,69 +173,91 @@
         <!-- DASHBOARD -->
         <section id="page-dashboard" class="page-section">
             <div id="dash-umkm" class="hidden">
-                <div class="flex justify-between items-center mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h2 class="text-3xl font-bold">Halo, <span id="dash-shop-name" class="text-primary italic">Toko</span>!</h2>
-                        <p class="text-slate-500">Pemilik: <span id="dash-owner-name">Nama</span></p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-dark">Halo, <span id="dash-shop-name" class="text-primary italic">Toko</span>!</h2>
+                        <p class="text-sm text-slate-500">Kelola operasional harian Anda hari ini.</p>
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <button onclick="navigate('finance')" class="flex-1 md:flex-none px-6 py-2 bg-white border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition">Kas Saya</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-slate-400 text-sm font-medium">Saldo Kas</p>
-                        <h3 id="dash-balance" class="text-2xl font-bold text-dark">Rp 0</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 relative">Saldo Kas</p>
+                        <h3 id="dash-balance" class="text-2xl font-bold text-dark relative">Rp 0</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-slate-400 text-sm font-medium">Estimasi Profit</p>
-                        <h3 id="dash-profit" class="text-2xl font-bold text-secondary">Rp 0</h3>
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 relative">Estimasi Profit</p>
+                        <h3 id="dash-profit" class="text-2xl font-bold text-secondary relative">Rp 0</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-slate-400 text-sm font-medium">Lowongan Aktif</p>
-                        <h3 id="dash-jobs-count" class="text-2xl font-bold text-dark">0</h3>
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 relative">Lowongan Aktif</p>
+                        <h3 id="dash-jobs-count" class="text-2xl font-bold text-dark relative">0</h3>
                     </div>
                 </div>
             </div>
 
             <div id="dash-worker" class="hidden">
-                <div class="mb-10 text-center">
-                    <h2 class="text-3xl font-bold">Halo, <span id="worker-name" class="text-primary">Pekerja</span>!</h2>
-                    <p class="text-slate-500">Temukan kesempatan kerja di UMKM lokal terbaik.</p>
+                <div class="mb-10">
+                    <h2 class="text-2xl md:text-3xl font-bold">Cari Pekerjaan, <span id="worker-name" class="text-primary">Pekerja</span>!</h2>
+                    <p class="text-slate-500">Temukan posisi yang sesuai dengan keahlian Anda.</p>
                 </div>
-                <div class="bg-white p-4 rounded-3xl shadow-sm border mb-10 flex items-center gap-4">
-                    <div class="flex-1 flex items-center bg-slate-50 px-5 py-3 rounded-2xl">
+                <div class="bg-white p-2 rounded-2xl shadow-sm border mb-8 flex flex-col md:flex-row items-center gap-2">
+                    <div class="flex-1 flex items-center bg-slate-50 px-5 py-3 rounded-xl w-full">
                         <i class="fas fa-search text-slate-300 mr-3"></i>
-                        <input type="text" id="job-search" onkeyup="renderJobGrid()" placeholder="Cari posisi atau nama UMKM..." class="bg-transparent w-full outline-none text-sm">
+                        <input type="text" id="job-search" onkeyup="renderJobGrid()" placeholder="Cari posisi atau nama UMKM..." class="bg-transparent w-full outline-none text-sm font-medium">
                     </div>
+                    <button class="w-full md:w-auto bg-dark text-white px-8 py-3 rounded-xl font-bold text-sm">Filter</button>
                 </div>
-                <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div id="job-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
         </section>
 
         <!-- FINANCE -->
         <section id="page-finance" class="page-section">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="space-y-8">
-                    <div class="bg-white p-8 rounded-3xl shadow-sm border">
-                        <h3 class="font-bold text-xl mb-6">Input Akuntansi</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Pencatatan Kas -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border">
+                        <h3 class="font-bold text-xl mb-6 flex items-center gap-2"><i class="fas fa-plus-circle text-primary"></i> Catat Transaksi</h3>
                         <form onsubmit="handleAddTransaction(event)">
                             <div class="grid grid-cols-2 gap-4 mb-4">
-                                <select id="fin-type" class="p-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm">
-                                    <option value="income">Pemasukan</option>
-                                    <option value="expense">Pengeluaran</option>
-                                </select>
-                                <input type="number" id="fin-amount" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Nominal" required>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase px-1">Tipe</label>
+                                    <select id="fin-type" class="w-full p-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm border-r-8 border-transparent">
+                                        <option value="income">Pemasukan (+)</option>
+                                        <option value="expense">Pengeluaran (-)</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase px-1">Nominal</label>
+                                    <input type="number" id="fin-amount" class="w-full p-4 bg-slate-50 rounded-2xl outline-none font-bold" placeholder="0" required>
+                                </div>
                             </div>
-                            <input type="text" id="fin-note" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Keterangan..." required>
-                            <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold">Simpan Transaksi</button>
+                            <div class="mb-6">
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase px-1">Keterangan</label>
+                                <input type="text" id="fin-note" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Contoh: Penjualan kopi pagi" required>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-md hover:bg-blue-700 transition">Simpan Laporan</button>
                         </form>
                     </div>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-sm border h-fit">
-                    <h3 class="font-bold text-xl mb-6 text-primary">Riwayat Keuangan</h3>
-                    <div id="finance-table-container" class="overflow-x-auto">
+
+                <!-- Riwayat Kas -->
+                <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border h-fit max-h-[500px] flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-xl text-primary">Riwayat Kas</h3>
+                        <span class="text-[10px] font-bold bg-slate-100 px-3 py-1 rounded-full uppercase">Real-time</span>
+                    </div>
+                    <div class="overflow-y-auto custom-scrollbar flex-1">
                         <table class="w-full text-left text-sm">
-                            <thead class="text-slate-400 font-bold uppercase text-[10px] border-b">
+                            <thead class="text-slate-400 font-bold uppercase text-[10px] border-b sticky top-0 bg-white">
                                 <tr>
-                                    <th class="py-3">Tanggal</th>
+                                    <th class="py-3 pr-2">Tgl</th>
                                     <th class="py-3">Keterangan</th>
                                     <th class="py-3 text-right">Nominal</th>
                                 </tr>
@@ -225,31 +267,76 @@
                     </div>
                 </div>
             </div>
+
+            <!-- FITUR BARU: AI Asisten Keuangan -->
+            <div id="ai-finance-section" class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-blue-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                        <h3 class="font-bold text-xl text-dark flex items-center gap-2">
+                            <i class="fas fa-robot text-primary"></i> Asisten Keuangan AI
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-1">Dapatkan analisis profit dan saran strategi bisnis otomatis berdasarkan data keuangan Anda.</p>
+                    </div>
+                    <button onclick="handleGenerateAI()" id="btn-ai-generate" class="w-full md:w-auto bg-primary text-white px-8 py-3 rounded-2xl font-bold shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2 shrink-0">
+                        <i class="fas fa-magic"></i> Minta Analisis AI
+                    </button>
+                </div>
+                
+                <div id="ai-result-container" class="hidden bg-white/80 backdrop-blur-sm p-6 md:p-8 rounded-3xl border border-white shadow-sm">
+                    <!-- Loading State -->
+                    <div id="ai-loading" class="hidden flex flex-col items-center justify-center py-8">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                        <p class="text-sm font-bold text-slate-500 animate-pulse">AI sedang menganalisis data keuangan Anda...</p>
+                    </div>
+                    
+                    <!-- Result Content -->
+                    <div id="ai-content" class="text-sm text-slate-700 leading-relaxed max-h-[400px] overflow-y-auto custom-scrollbar pr-4">
+                        <!-- Output dari API Gemini akan dirender di sini -->
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!-- JOBS -->
+        <!-- JOBS (RECRUITMENT) -->
         <section id="page-jobs" class="page-section">
             <div id="jobs-umkm-view" class="hidden">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold">Lowongan Saya</h2>
-                    <button onclick="toggleJobModal(true)" class="bg-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg"><i class="fas fa-plus mr-2"></i>Buat Lowongan</button>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                    <h2 class="text-2xl font-bold">Manajemen Rekrutmen</h2>
+                    <button onclick="toggleJobModal(true)" class="w-full sm:w-auto bg-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-plus mr-2"></i>Tambah Lowongan</button>
                 </div>
-                <div id="my-jobs-list" class="space-y-4"></div>
+                <div id="my-jobs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <div id="job-modal" class="fixed inset-0 bg-dark/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
-                <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-10">
-                    <h3 class="text-2xl font-bold mb-6">Posting Lowongan Baru</h3>
+            <!-- Job Modal -->
+            <div id="job-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-8 md:p-10 shadow-2xl scale-up">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-2xl font-bold">Posting Lowongan</h3>
+                        <button onclick="toggleJobModal(false)" class="text-slate-400 hover:text-dark"><i class="fas fa-times text-xl"></i></button>
+                    </div>
                     <form onsubmit="handlePostJob(event)">
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <input type="text" id="job-title" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Posisi Pekerjaan" required>
-                            <input type="number" id="job-salary" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Gaji (Juta)" required>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Posisi</label>
+                                <input type="text" id="job-title" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary" placeholder="Misal: Barista" required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Gaji (Jt/Bln)</label>
+                                <input type="number" id="job-salary" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary" placeholder="0" required>
+                            </div>
                         </div>
-                        <input type="text" id="job-loc" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Lokasi Toko" required>
-                        <textarea id="job-desc" rows="4" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-6" placeholder="Deskripsi pekerjaan..."></textarea>
-                        <div class="flex gap-4">
-                            <button type="button" onclick="toggleJobModal(false)" class="flex-1 font-bold text-slate-400">Batal</button>
-                            <button type="submit" class="flex-2 bg-primary text-white py-4 rounded-2xl font-bold px-10">Posting</button>
+                        <div class="mb-4">
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Lokasi Penempatan</label>
+                            <input type="text" id="job-loc" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary" placeholder="Alamat lengkap" required>
+                        </div>
+                        <div class="mb-8">
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Syarat & Deskripsi</label>
+                            <textarea id="job-desc" rows="3" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-primary" placeholder="Tulis kualifikasi yang dibutuhkan..."></textarea>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="toggleJobModal(false)" class="flex-1 font-bold text-slate-400 py-4 hover:bg-slate-50 rounded-2xl transition">Batal</button>
+                            <button type="submit" class="flex-[2] bg-primary text-white py-4 rounded-2xl font-bold shadow-lg">Tayangkan Sekarang</button>
                         </div>
                     </form>
                 </div>
@@ -257,21 +344,35 @@
         </section>
 
         <!-- CHAT -->
-        <section id="page-chat" class="page-section h-[70vh]">
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 flex h-full overflow-hidden">
-                <div class="w-1/3 border-r hidden md:flex flex-col">
-                    <div class="p-6 border-b"><h3 class="font-bold text-xl">Kontak</h3></div>
+        <section id="page-chat" class="page-section h-[75vh]">
+            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 flex h-full overflow-hidden">
+                <!-- Sidebar Chat -->
+                <div class="w-full md:w-80 border-r flex flex-col" id="chat-sidebar">
+                    <div class="p-6 border-b flex justify-between items-center bg-slate-50/50">
+                        <h3 class="font-bold text-lg">Pesan Aktif</h3>
+                        <span class="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded-full font-bold">LIVE</span>
+                    </div>
                     <div id="chat-users" class="flex-1 overflow-y-auto custom-scrollbar"></div>
                 </div>
-                <div class="flex-1 flex flex-col bg-slate-50/50">
-                    <div id="chat-header" class="p-6 bg-white border-b flex items-center">
-                        <h4 id="chat-active-name" class="font-bold text-slate-400">Pilih kontak</h4>
+                
+                <!-- Chat Window -->
+                <div class="hidden md:flex flex-1 flex-col bg-slate-50/30" id="chat-window">
+                    <div id="chat-header" class="p-5 bg-white border-b flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <button onclick="mobileBackToChatSidebar()" class="md:hidden p-2 text-slate-400"><i class="fas fa-arrow-left"></i></button>
+                            <h4 id="chat-active-name" class="font-bold text-slate-800">Mulai Obrolan</h4>
+                        </div>
                     </div>
-                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-3"></div>
-                    <div class="p-6 bg-white border-t">
-                        <form class="flex gap-4" onsubmit="handleSendMessage(event)">
-                            <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-50 px-6 py-4 rounded-2xl outline-none" disabled>
-                            <button type="submit" id="chat-btn" class="bg-primary text-white w-14 h-14 rounded-2xl flex items-center justify-center disabled:opacity-50" disabled><i class="fas fa-paper-plane"></i></button>
+                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4 custom-scrollbar">
+                        <div class="flex flex-col items-center justify-center h-full text-slate-300">
+                            <i class="fas fa-comment-dots text-6xl mb-4"></i>
+                            <p class="font-medium">Pilih kontak untuk mulai berdiskusi</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white border-t m-4 rounded-[2rem] shadow-sm">
+                        <form class="flex gap-2" onsubmit="handleSendMessage(event)">
+                            <input type="text" id="chat-input" placeholder="Tulis balasan..." class="flex-1 bg-slate-50 px-6 py-3 rounded-2xl outline-none text-sm" disabled>
+                            <button type="submit" id="chat-btn" class="bg-primary text-white w-12 h-12 rounded-xl flex items-center justify-center disabled:opacity-30 transition shadow-md" disabled><i class="fas fa-paper-plane"></i></button>
                         </form>
                     </div>
                 </div>
@@ -280,25 +381,31 @@
 
         <!-- PROFILE -->
         <section id="page-profile" class="page-section">
-            <div class="max-w-3xl mx-auto bg-white rounded-[2.5rem] shadow-sm border p-10">
-                <div class="flex justify-between items-start mb-10">
-                    <div class="flex items-center gap-6">
-                        <img id="prof-img" src="" class="w-24 h-24 rounded-3xl object-cover border-4 border-slate-100">
+            <div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] shadow-sm border p-8 md:p-12 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+                <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-12 gap-6 relative">
+                    <div class="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+                        <div class="relative">
+                            <img id="prof-img" src="" class="w-28 h-28 rounded-[2rem] object-cover border-4 border-white shadow-xl">
+                            <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-secondary border-4 border-white rounded-full flex items-center justify-center text-white text-[10px]">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
                         <div>
-                            <h2 id="prof-name-display" class="text-3xl font-bold">Nama</h2>
-                            <p id="prof-role-display" class="text-slate-400 uppercase font-bold text-xs tracking-widest mt-1">ROLE</p>
+                            <h2 id="prof-name-display" class="text-3xl font-bold text-dark">Nama</h2>
+                            <p id="prof-role-display" class="inline-block px-3 py-1 bg-slate-100 rounded-full text-slate-500 font-bold text-[10px] tracking-widest mt-2">ROLE</p>
                         </div>
                     </div>
-                    <button onclick="handleSaveProfile()" class="bg-secondary text-white px-8 py-3 rounded-2xl font-bold">Simpan</button>
+                    <button onclick="handleSaveProfile()" class="w-full sm:w-auto bg-secondary text-white px-10 py-3 rounded-2xl font-bold shadow-md hover:bg-emerald-600 transition">Update Profil</button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Lengkap</label>
-                        <input type="text" id="prof-name" class="w-full p-4 bg-slate-50 rounded-2xl outline-none">
+                <div class="grid grid-cols-1 gap-6 relative">
+                    <div class="group">
+                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest px-1">Nama Pengguna</label>
+                        <input type="text" id="prof-name" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-primary transition-all">
                     </div>
-                    <div id="prof-field-shop">
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Toko</label>
-                        <input type="text" id="prof-shop" class="w-full p-4 bg-slate-50 rounded-2xl outline-none">
+                    <div id="prof-field-shop" class="group">
+                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest px-1">Nama Unit Usaha / Toko</label>
+                        <input type="text" id="prof-shop" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-primary transition-all">
                     </div>
                 </div>
             </div>
@@ -306,17 +413,60 @@
 
     </main>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-dark text-white rounded-full font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[200]"></div>
+    <!-- Modal Akun Dummy -->
+    <div id="dummy-modal" class="fixed inset-0 bg-dark/70 backdrop-blur-md z-[101] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <div class="bg-primary p-6 text-white text-center">
+                <i class="fas fa-id-badge text-4xl mb-3"></i>
+                <h3 class="text-xl font-bold">Akses Akun Demo</h3>
+                <p class="text-blue-100 text-xs">Gunakan akun berikut untuk mencoba fitur tanpa daftar.</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3 mb-6">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-bold text-primary uppercase mb-1">UMKM 1 (Kopi Senja)</p>
+                            <p class="font-bold text-sm">kopi@test.com <span class="text-slate-300 mx-1">/</span> 123456</p>
+                        </div>
+                        <i class="fas fa-store text-slate-200"></i>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-bold text-primary uppercase mb-1">UMKM 2 (Warung Barokah)</p>
+                            <p class="font-bold text-sm">warung@test.com <span class="text-slate-300 mx-1">/</span> 123456</p>
+                        </div>
+                        <i class="fas fa-utensils text-slate-200"></i>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-bold text-secondary uppercase mb-1">Pekerja 1 (Barista)</p>
+                            <p class="font-bold text-sm">budi@test.com <span class="text-slate-300 mx-1">/</span> 123456</p>
+                        </div>
+                        <i class="fas fa-user-circle text-slate-200"></i>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-bold text-secondary uppercase mb-1">Pekerja 2 (Admin)</p>
+                            <p class="font-bold text-sm">ani@test.com <span class="text-slate-300 mx-1">/</span> 123456</p>
+                        </div>
+                        <i class="fas fa-user-circle text-slate-200"></i>
+                    </div>
+                </div>
+                <button onclick="closeDummyModal()" class="w-full py-4 bg-dark text-white rounded-2xl font-bold text-sm">Saya Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-dark text-white rounded-2xl font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[200] text-sm flex items-center gap-3">
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <span id="toast-msg"></span>
+    </div>
 
     <script>
-        /** * LOCAL STORAGE DATABASE SYSTEM 
-         * Pengganti Firebase 
-         */
+        /** * LOCAL STORAGE DATABASE SYSTEM */
         const DB = {
             get: (key) => JSON.parse(localStorage.getItem(`umkm_connect_${key}`)) || [],
             set: (key, data) => localStorage.setItem(`umkm_connect_${key}`, JSON.stringify(data)),
-            
-            // Helper untuk data tunggal atau session
             session: {
                 get: () => JSON.parse(sessionStorage.getItem('umkm_session')) || null,
                 set: (user) => sessionStorage.setItem('umkm_session', JSON.stringify(user)),
@@ -338,7 +488,7 @@
                 const dummies = [
                     { id: 'u_1', email: 'kopi@test.com', pass: '123456', name: 'Budi Santoso', shop: 'Kopi Senja', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Kopi+Senja&background=2563eb&color=fff' },
                     { id: 'u_2', email: 'warung@test.com', pass: '123456', name: 'Siti Aminah', shop: 'Warung Barokah', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Warung+Barokah&background=10b981&color=fff' },
-                    { id: 'u_3', email: 'budi@test.com', pass: '123456', name: 'Budi Pekerja', role: 'worker', skill: 'Barista', avatar: 'https://ui-avatars.com/api/?name=Budi&background=f59e0b&color=fff' },
+                    { id: 'u_3', email: 'budi@test.com', pass: '123456', name: 'Budi Barista', role: 'worker', skill: 'Barista', avatar: 'https://ui-avatars.com/api/?name=Budi&background=f59e0b&color=fff' },
                     { id: 'u_4', email: 'ani@test.com', pass: '123456', name: 'Ani Lestari', role: 'worker', skill: 'Admin Gudang', avatar: 'https://ui-avatars.com/api/?name=Ani&background=6366f1&color=fff' }
                 ];
                 DB.set('users', dummies);
@@ -357,7 +507,37 @@
             }
         };
 
-        // Auth Actions
+        // Navigation
+        window.navigate = (page) => {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            // Layout fixes for chat on mobile
+            if (page === 'chat' && window.innerWidth < 768) {
+                document.getElementById('chat-sidebar').classList.remove('hidden');
+                document.getElementById('chat-window').classList.add('hidden');
+            }
+
+            if (page === 'dashboard') initDashboard();
+            if (page === 'chat') renderChatList();
+            if (page === 'profile') initProfile();
+            if (page === 'jobs') renderJobManagement();
+            if (page === 'finance') renderFinanceView();
+            
+            window.scrollTo(0,0);
+        };
+
+        window.openDummyModal = () => document.getElementById('dummy-modal').classList.remove('hidden');
+        window.closeDummyModal = () => document.getElementById('dummy-modal').classList.add('hidden');
+
+        // Auth
+        window.toggleAuthTab = (tab) => {
+            document.getElementById('form-login').classList.toggle('hidden', tab === 'register');
+            document.getElementById('form-register').classList.toggle('hidden', tab === 'login');
+            document.getElementById('tab-login').className = tab === 'login' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-primary' : 'flex-1 py-3 font-bold text-slate-400';
+            document.getElementById('tab-register').className = tab === 'register' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-secondary' : 'flex-1 py-3 font-bold text-slate-400';
+        };
+
         window.handleAuthAction = (e, type) => {
             e.preventDefault();
             const email = type === 'login' ? document.getElementById('log-email').value : document.getElementById('reg-email').value;
@@ -370,13 +550,13 @@
                     DB.session.set(found);
                     updateNav();
                     navigate('dashboard');
-                    showToast('Login Berhasil!');
+                    showToast('Berhasil masuk ke dashboard');
                 } else {
-                    showToast('Email atau password salah', 'error');
+                    showToast('Akses ditolak: Data tidak cocok', 'error');
                 }
             } else {
                 const exists = allUsers.find(u => u.email === email);
-                if (exists) return showToast('Email sudah terdaftar', 'error');
+                if (exists) return showToast('Email sudah digunakan', 'error');
                 
                 const role = document.querySelector('input[name="role"]:checked').value;
                 const name = document.getElementById('reg-name').value;
@@ -395,7 +575,7 @@
                 DB.session.set(newUser);
                 updateNav();
                 navigate('dashboard');
-                showToast('Akun berhasil dibuat!');
+                showToast('Akun Anda siap digunakan!');
             }
         };
 
@@ -404,25 +584,7 @@
             DB.session.clear();
             updateNav();
             navigate('home');
-        };
-
-        // Navigation
-        window.navigate = (page) => {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('page-' + page).classList.add('active');
-            
-            if (page === 'dashboard') initDashboard();
-            if (page === 'chat') renderChatList();
-            if (page === 'profile') initProfile();
-            if (page === 'jobs') renderJobManagement();
-            if (page === 'finance') renderFinanceView();
-        };
-
-        window.toggleAuthTab = (tab) => {
-            document.getElementById('form-login').classList.toggle('hidden', tab === 'register');
-            document.getElementById('form-register').classList.toggle('hidden', tab === 'login');
-            document.getElementById('tab-login').className = tab === 'login' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-primary' : 'flex-1 py-3 font-bold text-slate-400';
-            document.getElementById('tab-register').className = tab === 'register' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-secondary' : 'flex-1 py-3 font-bold text-slate-400';
+            showToast('Anda telah keluar');
         };
 
         const updateNav = () => {
@@ -447,9 +609,8 @@
             
             if (currentUser.role === 'umkm') {
                 document.getElementById('dash-shop-name').innerText = currentUser.shop;
-                document.getElementById('dash-owner-name').innerText = currentUser.name;
                 document.getElementById('dash-jobs-count').innerText = allJobs.filter(j => j.userId === currentUser.id).length;
-                renderFinanceView(); // Update balance
+                renderFinanceView(); 
             } else {
                 document.getElementById('worker-name').innerText = currentUser.name;
                 renderJobGrid();
@@ -465,11 +626,16 @@
             
             tbody.innerHTML = trans.sort((a,b) => b.time - a.time).map(t => {
                 balance += (t.type === 'income' ? t.amount : -t.amount);
-                return `<tr><td class="py-3 text-[11px]">${t.date}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
+                return `<tr><td class="py-3 text-[10px] text-slate-400 pr-2">${t.date}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
             }).join('');
             
             const dashBal = document.getElementById('dash-balance');
+            const dashProf = document.getElementById('dash-profit');
             if (dashBal) dashBal.innerText = 'Rp ' + balance.toLocaleString();
+            if (dashProf) dashProf.innerText = 'Rp ' + (balance * 0.45).toLocaleString(); // Mockup profit calc
+
+            // Reset AI section whenever finance view is rendered fresh
+            document.getElementById('ai-result-container').classList.add('hidden');
         };
 
         window.handleAddTransaction = (e) => {
@@ -481,16 +647,105 @@
                 amount: parseInt(document.getElementById('fin-amount').value),
                 note: document.getElementById('fin-note').value,
                 time: Date.now(),
-                date: new Date().toLocaleDateString('id-ID')
+                date: new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit'})
             };
             trans.push(data);
             DB.set(`finance_${currentUser.id}`, trans);
             e.target.reset();
-            showToast('Transaksi disimpan');
+            showToast('Laporan berhasil disimpan');
             renderFinanceView();
         };
 
-        // Jobs
+        // --- NEW FEATURE: AI FINANCE ASSISTANT --- //
+        const generateAIContent = async (promptText) => {
+            const apiKey = ""; // Disertakan otomatis oleh environment Canvas
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            // Retry logic exponential backoff
+            const maxRetries = 5;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                    });
+                    
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(res => setTimeout(res, Math.pow(2, i) * 1000));
+                }
+            }
+        };
+
+        window.handleGenerateAI = async () => {
+            if (!currentUser || currentUser.role !== 'umkm') return;
+
+            const trans = DB.get(`finance_${currentUser.id}`);
+            if (trans.length === 0) {
+                showToast('Belum ada transaksi. Tambahkan data terlebih dahulu.', 'error');
+                return;
+            }
+
+            let income = 0; let expense = 0;
+            trans.forEach(t => {
+                if(t.type === 'income') income += t.amount;
+                else expense += t.amount;
+            });
+            let balance = income - expense;
+
+            const container = document.getElementById('ai-result-container');
+            const loading = document.getElementById('ai-loading');
+            const content = document.getElementById('ai-content');
+            const btn = document.getElementById('btn-ai-generate');
+
+            // UI Prep
+            container.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            content.classList.add('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const prompt = `Anda adalah seorang ahli dan konsultan keuangan khusus UMKM di Indonesia. 
+Nama Usaha/Toko: "${currentUser.shop}".
+Data Keuangan Saat Ini:
+- Total Pemasukan: Rp ${income.toLocaleString('id-ID')}
+- Total Pengeluaran: Rp ${expense.toLocaleString('id-ID')}
+- Profit / Saldo Bersih: Rp ${balance.toLocaleString('id-ID')}
+
+Tolong berikan:
+1. Analisis Profitabilitas: Bagaimana kondisi keuangan berdasarkan angka tersebut.
+2. Saran Budget & Strategi: Langkah konkret atau alokasi budget ke depannya untuk meningkatkan pertumbuhan bisnis.
+
+Harap berikan respon dalam format HTML sederhana (gunakan tag <br>, <b>, <ul>, <li>). JANGAN gunakan markdown blocks (seperti \`\`\`). Buat responnya profesional, memotivasi, dan mudah dibaca oleh pelaku UMKM.`;
+
+            try {
+                const aiResponse = await generateAIContent(prompt);
+                
+                // Fallback formatter jika AI masih mengirim markdown **text**
+                const formattedHtml = aiResponse
+                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                    .replace(/\*(.*?)\*/g, '<i>$1</i>');
+
+                content.innerHTML = formattedHtml;
+                content.classList.remove('hidden');
+            } catch (error) {
+                console.error("AI Generation Error:", error);
+                content.innerHTML = '<p class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Gagal menghubungi asisten AI. Silakan coba beberapa saat lagi.</p>';
+                content.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        };
+        // ---------------------------------------- //
+
+        // Recruitment
         const renderJobManagement = () => {
             if (currentUser.role === 'umkm') {
                 document.getElementById('jobs-umkm-view').classList.remove('hidden');
@@ -507,14 +762,22 @@
             const search = document.getElementById('job-search').value.toLowerCase();
             const filtered = allJobs.filter(j => j.title.toLowerCase().includes(search) || j.shopName.toLowerCase().includes(search));
             
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-10 text-center text-slate-400 italic">Tidak ditemukan lowongan yang cocok.</div>`;
+                return;
+            }
+
             grid.innerHTML = filtered.map(j => `
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 hover:shadow-lg transition-all">
-                    <div class="flex items-center gap-4 mb-4">
-                        <img src="${j.avatar}" class="w-12 h-12 rounded-xl object-cover">
-                        <div><h4 class="font-bold">${j.title}</h4><p class="text-primary text-xs font-bold">${j.shopName}</p></div>
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="${j.avatar}" class="w-12 h-12 rounded-2xl object-cover shadow-sm">
+                        <div><h4 class="font-bold text-dark leading-tight">${j.title}</h4><p class="text-primary text-[10px] font-bold uppercase tracking-widest">${j.shopName}</p></div>
                     </div>
-                    <p class="text-xs text-slate-500 line-clamp-2 mb-4">${j.desc}</p>
-                    <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="text-[10px] font-bold bg-slate-50 px-3 py-1 rounded-full text-slate-500"><i class="fas fa-map-marker-alt mr-1"></i>${j.location}</span>
+                        <span class="text-[10px] font-bold bg-emerald-50 px-3 py-1 rounded-full text-emerald-600">Rp ${j.salary}Jt/Bln</span>
+                    </div>
+                    <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold hover:bg-blue-700 transition">Kirim Lamaran</button>
                 </div>
             `).join('');
         };
@@ -522,13 +785,17 @@
         window.renderMyJobs = () => {
             const list = document.getElementById('my-jobs-list');
             const myJobs = allJobs.filter(j => j.userId === currentUser.id);
+            if (myJobs.length === 0) {
+                list.innerHTML = `<p class="col-span-full p-10 bg-white rounded-[2rem] text-center text-slate-400">Anda belum membuat lowongan.</p>`;
+                return;
+            }
             list.innerHTML = myJobs.map(j => `
-                <div class="bg-white p-5 rounded-2xl border flex justify-between items-center">
+                <div class="bg-white p-5 rounded-2xl border flex justify-between items-center shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 bg-blue-50 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-briefcase"></i></div>
-                        <div><h4 class="font-bold">${j.title}</h4><p class="text-[10px] text-slate-400 font-bold uppercase">${j.location} • Rp ${j.salary}Jt</p></div>
+                        <div><h4 class="font-bold text-sm">${j.title}</h4><p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${j.location} • Rp ${j.salary}Jt</p></div>
                     </div>
-                    <button onclick="handleDeleteJob('${j.id}')" class="text-red-400 hover:text-red-600 font-bold text-sm">Hapus</button>
+                    <button onclick="handleDeleteJob('${j.id}')" class="p-2 text-red-300 hover:text-red-500 transition"><i class="fas fa-trash-alt text-sm"></i></button>
                 </div>
             `).join('');
         };
@@ -548,7 +815,7 @@
             allJobs.push(data);
             DB.set('jobs', allJobs);
             toggleJobModal(false);
-            showToast('Lowongan diposting');
+            showToast('Lowongan berhasil ditayangkan');
             renderMyJobs();
         };
 
@@ -556,23 +823,24 @@
             allJobs = allJobs.filter(j => j.id !== id);
             DB.set('jobs', allJobs);
             renderMyJobs();
+            showToast('Lowongan dihapus');
         };
 
         window.applyJob = (jobId, employerId) => {
             if (!currentUser) return navigate('auth');
             const exists = allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id);
-            if (exists) return showToast('Sudah melamar pekerjaan ini', 'error');
+            if (exists) return showToast('Status: Sudah dilamar', 'error');
 
             const appData = { jobId, employerId, workerId: currentUser.id };
             allApps.push(appData);
             DB.set('applications', allApps);
-            showToast('Lamaran Terkirim! Chat aktif.');
+            showToast('Lamaran Terkirim! Chat dibuka.');
             navigate('chat');
         };
 
         window.toggleJobModal = (show) => document.getElementById('job-modal').classList.toggle('hidden', !show);
 
-        // Chat
+        // Chat Logic
         const renderChatList = () => {
             const list = document.getElementById('chat-users');
             if (!list || !currentUser) return;
@@ -585,17 +853,18 @@
             const contactUsers = allUsers.filter(u => connectedIds.includes(u.id));
             
             if (contactUsers.length === 0) {
-                list.innerHTML = `<p class="p-6 text-xs text-slate-400 italic">Lamar pekerjaan untuk membuka fitur chat.</p>`;
+                list.innerHTML = `<div class="p-10 text-center"><i class="fas fa-users-slash text-slate-200 text-3xl mb-3 block"></i><p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-loose">Belum ada koneksi.<br>Cari lowongan terlebih dahulu.</p></div>`;
                 return;
             }
 
             list.innerHTML = contactUsers.map(u => `
-                <div onclick="openChat('${u.id}')" class="p-4 border-b flex items-center gap-4 cursor-pointer hover:bg-slate-50 ${activeChatId === u.id ? 'bg-blue-50' : ''}">
-                    <img src="${u.avatar}" class="w-10 h-10 rounded-xl object-cover">
-                    <div>
-                        <h5 class="font-bold text-sm">${u.role === 'umkm' ? u.shop : u.name}</h5>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">${u.role}</p>
+                <div onclick="openChat('${u.id}')" class="p-5 border-b flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-all ${activeChatId === u.id ? 'bg-blue-50 border-r-4 border-r-primary' : ''}">
+                    <img src="${u.avatar}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+                    <div class="flex-1">
+                        <h5 class="font-bold text-sm text-dark">${u.role === 'umkm' ? u.shop : u.name}</h5>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${u.role}</p>
                     </div>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-200"></i>
                 </div>
             `).join('');
         };
@@ -603,19 +872,38 @@
         window.openChat = (id) => {
             activeChatId = id;
             const target = allUsers.find(u => u.id === id);
+            
+            // Handle mobile view
+            if (window.innerWidth < 768) {
+                document.getElementById('chat-sidebar').classList.add('hidden');
+                document.getElementById('chat-window').classList.remove('hidden', 'md:flex');
+            }
+
             document.getElementById('chat-active-name').innerText = target.role === 'umkm' ? target.shop : target.name;
             document.getElementById('chat-input').disabled = false;
             document.getElementById('chat-btn').disabled = false;
             
             const msgs = allChats.filter(m => (m.from === currentUser.id && m.to === activeChatId) || (m.from === activeChatId && m.to === currentUser.id));
             const box = document.getElementById('chat-box');
-            box.innerHTML = msgs.map(m => `
-                <div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}">
-                    <div class="px-4 py-2 rounded-2xl text-sm ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div>
-                </div>
-            `).join('');
+            
+            if (msgs.length === 0) {
+                box.innerHTML = `<div class="flex flex-col items-center justify-center h-full opacity-30 text-xs">Awal obrolan dengan ${target.name}</div>`;
+            } else {
+                box.innerHTML = msgs.map(m => `
+                    <div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}">
+                        <div class="px-5 py-3 rounded-2xl text-sm shadow-sm ${m.from === currentUser.id ? 'bg-primary text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}">
+                            ${m.msg}
+                        </div>
+                    </div>
+                `).join('');
+            }
             box.scrollTop = box.scrollHeight;
             renderChatList();
+        };
+
+        window.mobileBackToChatSidebar = () => {
+            document.getElementById('chat-sidebar').classList.remove('hidden');
+            document.getElementById('chat-window').classList.add('hidden', 'md:flex');
         };
 
         window.handleSendMessage = (e) => {
@@ -633,7 +921,9 @@
         // Profile
         const initProfile = () => {
             document.getElementById('prof-img').src = currentUser.avatar;
+            document.getElementById('prof-name-display').innerText = currentUser.name;
             document.getElementById('prof-name').value = currentUser.name;
+            document.getElementById('prof-role-display').innerText = currentUser.role;
             document.getElementById('prof-shop').value = currentUser.shop || '';
             document.getElementById('prof-field-shop').classList.toggle('hidden', currentUser.role !== 'umkm');
         };
@@ -648,19 +938,33 @@
             DB.set('users', allUsers);
             currentUser = updated;
             DB.session.set(updated);
-            showToast('Profil Diperbarui');
+            showToast('Perubahan profil disimpan');
             updateNav();
+            initProfile();
         };
 
-        // Toast
+        // Toast Notification
         window.showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 ${type === 'error' ? 'bg-red-600' : 'bg-dark'} text-white rounded-full font-bold shadow-2xl opacity-100 transition-all z-[200]`;
-            setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 3000);
+            const icon = document.getElementById('toast-icon');
+            const message = document.getElementById('toast-msg');
+            
+            message.innerText = msg;
+            icon.className = type === 'error' ? 'fas fa-exclamation-circle text-red-400' : 'fas fa-check-circle text-emerald-400';
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }, 3000);
         };
 
-        // Start
+        // Resize Listener for Mobile Landscape
+        window.addEventListener('resize', () => {
+            const activePage = document.querySelector('.page-section.active');
+            if (activePage && activePage.id === 'page-chat') renderChatList();
+        });
+
+        // Run
         initApp();
     </script>
 </body>
