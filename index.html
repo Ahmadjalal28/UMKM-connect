@@ -76,7 +76,7 @@
             </h1>
             <p class="text-lg text-slate-500 max-w-2xl mx-auto mb-10">Platform manajemen usaha, laporan keuangan cerdas, dan rekrutmen talenta lokal dalam satu aplikasi.</p>
             <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl max-w-lg mx-auto mb-10 text-sm">
-                <p class="font-bold text-blue-800 mb-2">Akun Dummy Tersedia:</p>
+                <p class="font-bold text-blue-800 mb-2">Akun Dummy Tersedia (Data Lokal):</p>
                 <ul class="text-blue-700 space-y-1 text-left list-disc list-inside">
                     <li><b>UMKM 1:</b> kopi@test.com / 123456</li>
                     <li><b>UMKM 2:</b> warung@test.com / 123456</li>
@@ -115,13 +115,13 @@
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Peran Akun</label>
                             <div class="grid grid-cols-2 gap-4">
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="role" value="umkm" class="hidden peer" checked onchange="toggleRegFields('umkm')">
+                                    <input type="radio" name="role" value="umkm" class="hidden peer" checked>
                                     <div class="p-3 text-center border-2 border-slate-100 rounded-2xl peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary">
                                         <i class="fas fa-store mb-1 block"></i> <span class="text-sm font-bold">UMKM</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="role" value="worker" class="hidden peer" onchange="toggleRegFields('worker')">
+                                    <input type="radio" name="role" value="worker" class="hidden peer">
                                     <div class="p-3 text-center border-2 border-slate-100 rounded-2xl peer-checked:border-primary peer-checked:bg-blue-50 peer-checked:text-primary">
                                         <i class="fas fa-user-tie mb-1 block"></i> <span class="text-sm font-bold">Pekerja</span>
                                     </div>
@@ -237,7 +237,6 @@
                 <div id="my-jobs-list" class="space-y-4"></div>
             </div>
 
-            <!-- Job Modal -->
             <div id="job-modal" class="fixed inset-0 bg-dark/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-10">
                     <h3 class="text-2xl font-bold mb-6">Posting Lowongan Baru</h3>
@@ -309,125 +308,66 @@
 
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-dark text-white rounded-full font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[200]"></div>
 
-    <!-- Firebase Imports -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global Firebase Config
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'umkm-connect-default';
+    <script>
+        /** * LOCAL STORAGE DATABASE SYSTEM 
+         * Pengganti Firebase 
+         */
+        const DB = {
+            get: (key) => JSON.parse(localStorage.getItem(`umkm_connect_${key}`)) || [],
+            set: (key, data) => localStorage.setItem(`umkm_connect_${key}`, JSON.stringify(data)),
+            
+            // Helper untuk data tunggal atau session
+            session: {
+                get: () => JSON.parse(sessionStorage.getItem('umkm_session')) || null,
+                set: (user) => sessionStorage.setItem('umkm_session', JSON.stringify(user)),
+                clear: () => sessionStorage.removeItem('umkm_session')
+            }
+        };
 
         // State
-        let currentUser = null;
+        let currentUser = DB.session.get();
         let activeChatId = null;
-        let allUsers = [];
-        let allJobs = [];
-        let allApps = [];
+        let allUsers = DB.get('users');
+        let allJobs = DB.get('jobs');
+        let allApps = DB.get('applications');
+        let allChats = DB.get('chats');
 
-        // App Init & Auth Rule 3
-        const initApp = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+        // Seed Dummy Data
+        const seedDummyData = () => {
+            if (allUsers.length === 0) {
+                const dummies = [
+                    { id: 'u_1', email: 'kopi@test.com', pass: '123456', name: 'Budi Santoso', shop: 'Kopi Senja', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Kopi+Senja&background=2563eb&color=fff' },
+                    { id: 'u_2', email: 'warung@test.com', pass: '123456', name: 'Siti Aminah', shop: 'Warung Barokah', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Warung+Barokah&background=10b981&color=fff' },
+                    { id: 'u_3', email: 'budi@test.com', pass: '123456', name: 'Budi Pekerja', role: 'worker', skill: 'Barista', avatar: 'https://ui-avatars.com/api/?name=Budi&background=f59e0b&color=fff' },
+                    { id: 'u_4', email: 'ani@test.com', pass: '123456', name: 'Ani Lestari', role: 'worker', skill: 'Admin Gudang', avatar: 'https://ui-avatars.com/api/?name=Ani&background=6366f1&color=fff' }
+                ];
+                DB.set('users', dummies);
+                allUsers = dummies;
             }
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Fetch/Create user profile in Firestore
-                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
-                const snap = await getDoc(userRef);
-                
-                if (snap.exists()) {
-                    currentUser = { id: user.uid, ...snap.data() };
-                } else {
-                    // Just an anonymous user session without profile data yet
-                    currentUser = null;
-                }
-                updateNav();
-                setupListeners();
-                
-                // Seed dummy data if needed
-                seedDummyData();
+        // Initialize App
+        const initApp = () => {
+            seedDummyData();
+            updateNav();
+            if (currentUser) {
+                navigate('dashboard');
             } else {
-                currentUser = null;
-                updateNav();
                 navigate('home');
             }
-        });
-
-        // Seed Dummy Data (4 Accounts)
-        const seedDummyData = async () => {
-            const usersCol = collection(db, 'artifacts', appId, 'public', 'data', 'users');
-            const q = await getDocs(usersCol);
-            
-            // Only seed if empty (or specific dummy emails don't exist)
-            if (q.empty) {
-                const dummies = [
-                    { email: 'kopi@test.com', pass: '123456', name: 'Budi Santoso', shop: 'Kopi Senja', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Kopi+Senja&background=2563eb&color=fff' },
-                    { email: 'warung@test.com', pass: '123456', name: 'Siti Aminah', shop: 'Warung Barokah', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Warung+Barokah&background=10b981&color=fff' },
-                    { email: 'budi@test.com', pass: '123456', name: 'Budi Pekerja', role: 'worker', skill: 'Barista', avatar: 'https://ui-avatars.com/api/?name=Budi&background=f59e0b&color=fff' },
-                    { email: 'ani@test.com', pass: '123456', name: 'Ani Lestari', role: 'worker', skill: 'Admin Gudang', avatar: 'https://ui-avatars.com/api/?name=Ani&background=6366f1&color=fff' }
-                ];
-
-                for (const d of dummies) {
-                    // In a real app, we'd use auth.createUser, but for this demo we simulate with a "users" collection lookup
-                    const id = 'dummy_' + d.email.split('@')[0];
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id), d);
-                }
-            }
-        };
-
-        // Listeners
-        const setupListeners = () => {
-            if (!auth.currentUser) return;
-
-            // Users Listener
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
-                allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderChatList();
-            }, (err) => console.error(err));
-
-            // Jobs Listener
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'jobs'), (snap) => {
-                allJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderJobGrid();
-                if (currentUser?.role === 'umkm') renderMyJobs();
-            }, (err) => console.error(err));
-
-            // Applications Listener (for Chat accessibility)
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'applications'), (snap) => {
-                allApps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderChatList();
-            });
-
-            // Finance Listener (Specific to current user)
-            onSnapshot(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'finance'), (snap) => {
-                const trans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderFinanceTable(trans);
-            });
         };
 
         // Auth Actions
-        window.handleAuthAction = async (e, type) => {
+        window.handleAuthAction = (e, type) => {
             e.preventDefault();
             const email = type === 'login' ? document.getElementById('log-email').value : document.getElementById('reg-email').value;
             const pass = type === 'login' ? document.getElementById('log-pass').value : document.getElementById('reg-pass').value;
 
-            // Simple "Login" Simulation by checking "users" collection
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
-            const snap = await getDocs(q);
-            const found = snap.docs.find(d => d.data().email === email && d.data().pass === pass);
-
             if (type === 'login') {
+                const found = allUsers.find(u => u.email === email && u.pass === pass);
                 if (found) {
-                    currentUser = { id: found.id, ...found.data() };
+                    currentUser = found;
+                    DB.session.set(found);
                     updateNav();
                     navigate('dashboard');
                     showToast('Login Berhasil!');
@@ -435,18 +375,24 @@
                     showToast('Email atau password salah', 'error');
                 }
             } else {
-                if (found) return showToast('Email sudah terdaftar', 'error');
+                const exists = allUsers.find(u => u.email === email);
+                if (exists) return showToast('Email sudah terdaftar', 'error');
+                
                 const role = document.querySelector('input[name="role"]:checked').value;
                 const name = document.getElementById('reg-name').value;
                 const shop = document.getElementById('reg-shop').value;
+                
                 const newUser = {
+                    id: 'u_' + Date.now(),
                     email, pass, name, role, 
                     shop: role === 'umkm' ? shop : '',
                     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(role === 'umkm' ? shop : name)}&background=random`
                 };
-                const id = 'u_' + Date.now();
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id), newUser);
-                currentUser = { id, ...newUser };
+                
+                allUsers.push(newUser);
+                DB.set('users', allUsers);
+                currentUser = newUser;
+                DB.session.set(newUser);
                 updateNav();
                 navigate('dashboard');
                 showToast('Akun berhasil dibuat!');
@@ -455,6 +401,7 @@
 
         window.handleLogout = () => {
             currentUser = null;
+            DB.session.clear();
             updateNav();
             navigate('home');
         };
@@ -463,9 +410,12 @@
         window.navigate = (page) => {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
+            
             if (page === 'dashboard') initDashboard();
             if (page === 'chat') renderChatList();
             if (page === 'profile') initProfile();
+            if (page === 'jobs') renderJobManagement();
+            if (page === 'finance') renderFinanceView();
         };
 
         window.toggleAuthTab = (tab) => {
@@ -499,68 +449,56 @@
                 document.getElementById('dash-shop-name').innerText = currentUser.shop;
                 document.getElementById('dash-owner-name').innerText = currentUser.name;
                 document.getElementById('dash-jobs-count').innerText = allJobs.filter(j => j.userId === currentUser.id).length;
+                renderFinanceView(); // Update balance
             } else {
                 document.getElementById('worker-name').innerText = currentUser.name;
+                renderJobGrid();
             }
         };
 
-        // Finance Actions
-        window.handleAddTransaction = async (e) => {
+        // Finance
+        const renderFinanceView = () => {
+            if (!currentUser || currentUser.role !== 'umkm') return;
+            const trans = DB.get(`finance_${currentUser.id}`);
+            const tbody = document.getElementById('finance-table');
+            let balance = 0;
+            
+            tbody.innerHTML = trans.sort((a,b) => b.time - a.time).map(t => {
+                balance += (t.type === 'income' ? t.amount : -t.amount);
+                return `<tr><td class="py-3 text-[11px]">${t.date}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
+            }).join('');
+            
+            const dashBal = document.getElementById('dash-balance');
+            if (dashBal) dashBal.innerText = 'Rp ' + balance.toLocaleString();
+        };
+
+        window.handleAddTransaction = (e) => {
             e.preventDefault();
-            if (!currentUser) return;
+            const trans = DB.get(`finance_${currentUser.id}`);
             const data = {
+                id: Date.now(),
                 type: document.getElementById('fin-type').value,
                 amount: parseInt(document.getElementById('fin-amount').value),
                 note: document.getElementById('fin-note').value,
-                timestamp: serverTimestamp(),
+                time: Date.now(),
                 date: new Date().toLocaleDateString('id-ID')
             };
-            await addDoc(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'finance'), data);
+            trans.push(data);
+            DB.set(`finance_${currentUser.id}`, trans);
             e.target.reset();
             showToast('Transaksi disimpan');
+            renderFinanceView();
         };
 
-        const renderFinanceTable = (data) => {
-            const tbody = document.getElementById('finance-table');
-            let balance = 0;
-            tbody.innerHTML = data.sort((a,b) => b.timestamp - a.timestamp).map(t => {
-                balance += (t.type === 'income' ? t.amount : -t.amount);
-                return `<tr><td class="py-3 text-[11px]">${t.date || ''}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
-            }).join('');
-            
-            if(document.getElementById('dash-balance')) {
-                document.getElementById('dash-balance').innerText = 'Rp ' + balance.toLocaleString();
+        // Jobs
+        const renderJobManagement = () => {
+            if (currentUser.role === 'umkm') {
+                document.getElementById('jobs-umkm-view').classList.remove('hidden');
+                renderMyJobs();
+            } else {
+                document.getElementById('jobs-umkm-view').classList.add('hidden');
+                renderJobGrid();
             }
-        };
-
-        // Job Actions
-        window.handlePostJob = async (e) => {
-            e.preventDefault();
-            const data = {
-                userId: currentUser.id,
-                shopName: currentUser.shop,
-                title: document.getElementById('job-title').value,
-                salary: document.getElementById('job-salary').value,
-                location: document.getElementById('job-loc').value,
-                desc: document.getElementById('job-desc').value,
-                avatar: currentUser.avatar,
-                createdAt: serverTimestamp()
-            };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'jobs'), data);
-            toggleJobModal(false);
-            showToast('Lowongan berhasil diposting');
-        };
-
-        window.applyJob = async (jobId, employerId) => {
-            if (!currentUser) return navigate('auth');
-            const exists = allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id);
-            if (exists) return showToast('Sudah melamar pekerjaan ini', 'error');
-
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'applications'), {
-                jobId, employerId, workerId: currentUser.id, timestamp: serverTimestamp()
-            });
-            showToast('Lamaran Terkirim! Chat aktif.');
-            navigate('chat');
         };
 
         window.renderJobGrid = () => {
@@ -575,7 +513,7 @@
                         <img src="${j.avatar}" class="w-12 h-12 rounded-xl object-cover">
                         <div><h4 class="font-bold">${j.title}</h4><p class="text-primary text-xs font-bold">${j.shopName}</p></div>
                     </div>
-                    <p class="text-xs text-slate-500 line-clamp-2 mb-4">${j.desc || 'Deskripsi tidak tersedia'}</p>
+                    <p class="text-xs text-slate-500 line-clamp-2 mb-4">${j.desc}</p>
                     <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
                 </div>
             `).join('');
@@ -583,7 +521,6 @@
 
         window.renderMyJobs = () => {
             const list = document.getElementById('my-jobs-list');
-            if (!list) return;
             const myJobs = allJobs.filter(j => j.userId === currentUser.id);
             list.innerHTML = myJobs.map(j => `
                 <div class="bg-white p-5 rounded-2xl border flex justify-between items-center">
@@ -596,21 +533,54 @@
             `).join('');
         };
 
-        window.handleDeleteJob = async (id) => {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'jobs', id));
-            showToast('Terhapus');
+        window.handlePostJob = (e) => {
+            e.preventDefault();
+            const data = {
+                id: 'j_' + Date.now(),
+                userId: currentUser.id,
+                shopName: currentUser.shop,
+                title: document.getElementById('job-title').value,
+                salary: document.getElementById('job-salary').value,
+                location: document.getElementById('job-loc').value,
+                desc: document.getElementById('job-desc').value,
+                avatar: currentUser.avatar
+            };
+            allJobs.push(data);
+            DB.set('jobs', allJobs);
+            toggleJobModal(false);
+            showToast('Lowongan diposting');
+            renderMyJobs();
+        };
+
+        window.handleDeleteJob = (id) => {
+            allJobs = allJobs.filter(j => j.id !== id);
+            DB.set('jobs', allJobs);
+            renderMyJobs();
+        };
+
+        window.applyJob = (jobId, employerId) => {
+            if (!currentUser) return navigate('auth');
+            const exists = allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id);
+            if (exists) return showToast('Sudah melamar pekerjaan ini', 'error');
+
+            const appData = { jobId, employerId, workerId: currentUser.id };
+            allApps.push(appData);
+            DB.set('applications', allApps);
+            showToast('Lamaran Terkirim! Chat aktif.');
+            navigate('chat');
         };
 
         window.toggleJobModal = (show) => document.getElementById('job-modal').classList.toggle('hidden', !show);
 
-        // Chat Actions
+        // Chat
         const renderChatList = () => {
             const list = document.getElementById('chat-users');
             if (!list || !currentUser) return;
 
-            // Connect if applied
-            const connections = allApps.filter(a => a.workerId === currentUser.id || a.employerId === currentUser.id);
-            const connectedIds = [...new Set(connections.map(a => a.workerId === currentUser.id ? a.employerId : a.workerId))];
+            const connectedIds = [...new Set(allApps
+                .filter(a => a.workerId === currentUser.id || a.employerId === currentUser.id)
+                .map(a => a.workerId === currentUser.id ? a.employerId : a.workerId)
+            )];
             
             const contactUsers = allUsers.filter(u => connectedIds.includes(u.id));
             
@@ -636,36 +606,31 @@
             document.getElementById('chat-active-name').innerText = target.role === 'umkm' ? target.shop : target.name;
             document.getElementById('chat-input').disabled = false;
             document.getElementById('chat-btn').disabled = false;
-            renderChatList();
             
-            // Sub to messages
-            const qChat = query(collection(db, 'artifacts', appId, 'public', 'data', 'chats'));
-            onSnapshot(qChat, (snap) => {
-                const msgs = snap.docs.map(d => d.data())
-                    .filter(m => (m.from === currentUser.id && m.to === activeChatId) || (m.from === activeChatId && m.to === currentUser.id))
-                    .sort((a,b) => a.timestamp - b.timestamp);
-                
-                const box = document.getElementById('chat-box');
-                box.innerHTML = msgs.map(m => `
-                    <div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}">
-                        <div class="px-4 py-2 rounded-2xl text-sm ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div>
-                    </div>
-                `).join('');
-                box.scrollTop = box.scrollHeight;
-            });
+            const msgs = allChats.filter(m => (m.from === currentUser.id && m.to === activeChatId) || (m.from === activeChatId && m.to === currentUser.id));
+            const box = document.getElementById('chat-box');
+            box.innerHTML = msgs.map(m => `
+                <div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}">
+                    <div class="px-4 py-2 rounded-2xl text-sm ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div>
+                </div>
+            `).join('');
+            box.scrollTop = box.scrollHeight;
+            renderChatList();
         };
 
-        window.handleSendMessage = async (e) => {
+        window.handleSendMessage = (e) => {
             e.preventDefault();
             const input = document.getElementById('chat-input');
             if (!input.value.trim() || !activeChatId) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), {
-                from: currentUser.id, to: activeChatId, msg: input.value, timestamp: Date.now()
-            });
+            
+            const msg = { from: currentUser.id, to: activeChatId, msg: input.value, time: Date.now() };
+            allChats.push(msg);
+            DB.set('chats', allChats);
             input.value = '';
+            openChat(activeChatId);
         };
 
-        // Profile Actions
+        // Profile
         const initProfile = () => {
             document.getElementById('prof-img').src = currentUser.avatar;
             document.getElementById('prof-name').value = currentUser.name;
@@ -673,17 +638,21 @@
             document.getElementById('prof-field-shop').classList.toggle('hidden', currentUser.role !== 'umkm');
         };
 
-        window.handleSaveProfile = async () => {
+        window.handleSaveProfile = () => {
             const updated = {
+                ...currentUser,
                 name: document.getElementById('prof-name').value,
                 shop: document.getElementById('prof-shop').value
             };
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.id), updated);
-            currentUser = { ...currentUser, ...updated };
+            allUsers = allUsers.map(u => u.id === currentUser.id ? updated : u);
+            DB.set('users', allUsers);
+            currentUser = updated;
+            DB.session.set(updated);
             showToast('Profil Diperbarui');
+            updateNav();
         };
 
-        // Utility
+        // Toast
         window.showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
@@ -691,6 +660,7 @@
             setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 3000);
         };
 
+        // Start
         initApp();
     </script>
 </body>
