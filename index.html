@@ -48,16 +48,15 @@
                 <div id="nav-user" class="hidden flex items-center space-x-1 sm:space-x-4">
                     <button onclick="navigate('dashboard')" class="p-2 text-slate-500 hover:text-primary transition" title="Dashboard"><i class="fas fa-th-large text-lg"></i></button>
                     <button id="nav-jobs-btn" onclick="navigate('jobs')" class="p-2 text-slate-500 hover:text-primary transition" title="Lowongan"><i class="fas fa-briefcase text-lg"></i></button>
-                    <button id="nav-finance-btn" onclick="navigate('finance')" class="hidden p-2 text-slate-500 hover:text-primary transition" title="Keuangan & Kalkulator"><i class="fas fa-calculator text-lg"></i></button>
+                    <button id="nav-finance-btn" class="hidden p-2 text-slate-500 hover:text-primary transition" onclick="navigate('finance')" title="Keuangan"><i class="fas fa-calculator text-lg"></i></button>
                     <button onclick="navigate('chat')" class="p-2 text-slate-500 hover:text-primary transition relative" title="Pesan">
                         <i class="fas fa-comments text-lg"></i>
-                        <span id="chat-notif" class="hidden absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
                     <div class="h-8 w-px bg-slate-200 mx-2"></div>
                     <button onclick="navigate('profile')" class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-100 transition">
                         <img id="nav-avatar" src="" class="w-8 h-8 rounded-full border border-primary/20 object-cover">
                     </button>
-                    <button onclick="logout()" class="p-2 text-red-400 hover:text-red-600 transition"><i class="fas fa-power-off"></i></button>
+                    <button onclick="handleLogout()" class="p-2 text-red-400 hover:text-red-600 transition"><i class="fas fa-power-off"></i></button>
                 </div>
 
                 <div id="nav-guest" class="flex items-center space-x-4">
@@ -76,6 +75,15 @@
                 Empower Your <span class="text-primary">Small Business</span> <br>with Local Talents.
             </h1>
             <p class="text-lg text-slate-500 max-w-2xl mx-auto mb-10">Platform manajemen usaha, laporan keuangan cerdas, dan rekrutmen talenta lokal dalam satu aplikasi.</p>
+            <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl max-w-lg mx-auto mb-10 text-sm">
+                <p class="font-bold text-blue-800 mb-2">Akun Dummy Tersedia:</p>
+                <ul class="text-blue-700 space-y-1 text-left list-disc list-inside">
+                    <li><b>UMKM 1:</b> kopi@test.com / 123456</li>
+                    <li><b>UMKM 2:</b> warung@test.com / 123456</li>
+                    <li><b>Pekerja 1:</b> budi@test.com / 123456</li>
+                    <li><b>Pekerja 2:</b> ani@test.com / 123456</li>
+                </ul>
+            </div>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <button onclick="navigate('auth')" class="bg-primary text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all">Temukan Karir</button>
                 <button onclick="navigate('auth')" class="bg-white text-dark border border-slate-200 px-10 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition-all">Kelola UMKM</button>
@@ -86,11 +94,11 @@
         <section id="page-auth" class="page-section">
             <div class="max-w-md mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
                 <div class="flex p-2 bg-slate-50 gap-2">
-                    <button id="tab-login" class="flex-1 py-3 font-bold rounded-2xl transition-all" onclick="toggleAuthTab('login')">Masuk</button>
-                    <button id="tab-register" class="flex-1 py-3 font-bold rounded-2xl transition-all" onclick="toggleAuthTab('register')">Daftar</button>
+                    <button id="tab-login" class="flex-1 py-3 font-bold rounded-2xl transition-all bg-white shadow-sm text-primary" onclick="toggleAuthTab('login')">Masuk</button>
+                    <button id="tab-register" class="flex-1 py-3 font-bold rounded-2xl transition-all text-slate-400" onclick="toggleAuthTab('register')">Daftar</button>
                 </div>
                 <div class="p-8">
-                    <form id="form-login" onsubmit="handleAuth(event, 'login')">
+                    <form id="form-login" onsubmit="handleAuthAction(event, 'login')">
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
                             <input type="email" id="log-email" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" placeholder="anda@email.com" required>
@@ -102,7 +110,7 @@
                         <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg transition-all">Masuk</button>
                     </form>
 
-                    <form id="form-register" class="hidden" onsubmit="handleAuth(event, 'register')">
+                    <form id="form-register" class="hidden" onsubmit="handleAuthAction(event, 'register')">
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Peran Akun</label>
                             <div class="grid grid-cols-2 gap-4">
@@ -121,7 +129,7 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Lengkap Pemilik</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Lengkap</label>
                             <input type="text" id="reg-name" class="w-full px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none" required>
                         </div>
                         <div id="field-shop-name" class="mb-4">
@@ -151,14 +159,13 @@
                         <p class="text-slate-500">Pemilik: <span id="dash-owner-name">Nama</span></p>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                     <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                         <p class="text-slate-400 text-sm font-medium">Saldo Kas</p>
                         <h3 id="dash-balance" class="text-2xl font-bold text-dark">Rp 0</h3>
                     </div>
                     <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-slate-400 text-sm font-medium">Estimasi Profit Bulan Ini</p>
+                        <p class="text-slate-400 text-sm font-medium">Estimasi Profit</p>
                         <h3 id="dash-profit" class="text-2xl font-bold text-secondary">Rp 0</h3>
                     </div>
                     <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
@@ -166,70 +173,30 @@
                         <h3 id="dash-jobs-count" class="text-2xl font-bold text-dark">0</h3>
                     </div>
                 </div>
-
-                <div class="bg-blue-600 p-8 rounded-[2rem] text-white flex flex-col md:flex-row items-center gap-8 shadow-xl">
-                    <div class="text-5xl opacity-50"><i class="fas fa-magic"></i></div>
-                    <div class="flex-1">
-                        <h4 class="font-bold text-xl mb-2">Laporan Akuntansi AI</h4>
-                        <p id="dash-ai-insight" class="text-blue-100">Analisis otomatis keuangan Anda tersedia sekarang.</p>
-                    </div>
-                    <button onclick="navigate('finance')" class="bg-white text-blue-600 px-6 py-3 rounded-2xl font-bold whitespace-nowrap">Lihat Analisis</button>
-                </div>
             </div>
 
             <div id="dash-worker" class="hidden">
-                <div class="mb-10">
+                <div class="mb-10 text-center">
                     <h2 class="text-3xl font-bold">Halo, <span id="worker-name" class="text-primary">Pekerja</span>!</h2>
-                    <p class="text-slate-500">Cari lowongan yang cocok dengan keahlian Anda.</p>
+                    <p class="text-slate-500">Temukan kesempatan kerja di UMKM lokal terbaik.</p>
                 </div>
-
                 <div class="bg-white p-4 rounded-3xl shadow-sm border mb-10 flex items-center gap-4">
                     <div class="flex-1 flex items-center bg-slate-50 px-5 py-3 rounded-2xl">
                         <i class="fas fa-search text-slate-300 mr-3"></i>
-                        <input type="text" id="job-search" onkeyup="filterJobs()" placeholder="Cari posisi atau nama UMKM..." class="bg-transparent w-full outline-none text-sm">
+                        <input type="text" id="job-search" onkeyup="renderJobGrid()" placeholder="Cari posisi atau nama UMKM..." class="bg-transparent w-full outline-none text-sm">
                     </div>
                 </div>
-
-                <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Cards via JS -->
-                </div>
+                <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
         </section>
 
-        <!-- FINANCE & CALCULATION -->
+        <!-- FINANCE -->
         <section id="page-finance" class="page-section">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="space-y-8">
                     <div class="bg-white p-8 rounded-3xl shadow-sm border">
-                        <h3 class="font-bold text-xl mb-6"><i class="fas fa-calculator text-primary mr-2"></i>Kalkulator Usaha (Simulasi)</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Budget Modal (Rp)</label>
-                                <input type="number" id="calc-budget" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="10000000">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Estimasi Penjualan/Bulan (Unit)</label>
-                                <input type="number" id="calc-sales" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="100">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Harga per Unit (Rp)</label>
-                                <input type="number" id="calc-price" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="50000">
-                            </div>
-                            <button onclick="calculateStrategy()" class="w-full bg-dark text-white py-4 rounded-2xl font-bold">Hitung Strategi & Profit</button>
-                        </div>
-                        <div id="calc-result" class="mt-6 p-6 bg-slate-50 rounded-2xl hidden">
-                            <div class="flex justify-between mb-2"><span class="text-sm">Estimasi Omzet:</span> <span id="res-omzet" class="font-bold"></span></div>
-                            <div class="flex justify-between mb-2"><span class="text-sm">Potensi Profit:</span> <span id="res-profit" class="font-bold text-secondary"></span></div>
-                            <div class="mt-4 pt-4 border-t border-slate-200">
-                                <p class="text-xs font-bold text-slate-400 uppercase mb-2">Strategi AI:</p>
-                                <p id="res-strategy" class="text-sm italic text-slate-600"></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-8 rounded-3xl shadow-sm border">
-                        <h3 class="font-bold text-xl mb-6"><i class="fas fa-book text-primary mr-2"></i>Input Akuntansi</h3>
-                        <form onsubmit="addTransaction(event)">
+                        <h3 class="font-bold text-xl mb-6">Input Akuntansi</h3>
+                        <form onsubmit="handleAddTransaction(event)">
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <select id="fin-type" class="p-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm">
                                     <option value="income">Pemasukan</option>
@@ -238,17 +205,13 @@
                                 <input type="number" id="fin-amount" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Nominal" required>
                             </div>
                             <input type="text" id="fin-note" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Keterangan..." required>
-                            <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold">Catat Transaksi</button>
+                            <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-bold">Simpan Transaksi</button>
                         </form>
                     </div>
                 </div>
-
                 <div class="bg-white p-8 rounded-3xl shadow-sm border h-fit">
-                    <h3 class="font-bold text-xl mb-6">Laporan Akuntansi Sederhana (AI)</h3>
-                    <div id="ai-report-box" class="mb-6 p-5 bg-blue-50 border border-blue-100 rounded-2xl text-sm leading-relaxed text-blue-800">
-                        <i class="fas fa-robot mr-2"></i> <span id="ai-report-text">Belum ada data. Masukkan transaksi untuk analisis AI.</span>
-                    </div>
-                    <div class="overflow-x-auto">
+                    <h3 class="font-bold text-xl mb-6 text-primary">Riwayat Keuangan</h3>
+                    <div id="finance-table-container" class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="text-slate-400 font-bold uppercase text-[10px] border-b">
                                 <tr>
@@ -274,22 +237,17 @@
                 <div id="my-jobs-list" class="space-y-4"></div>
             </div>
 
-            <div id="jobs-worker-view" class="hidden">
-                <h2 class="text-3xl font-bold mb-8">Eksplorasi Karir UMKM</h2>
-                <div id="explore-jobs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-            </div>
-
             <!-- Job Modal -->
             <div id="job-modal" class="fixed inset-0 bg-dark/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-10">
-                    <h3 class="text-2xl font-bold mb-6">Posting Lowongan</h3>
-                    <form onsubmit="postJob(event)">
+                    <h3 class="text-2xl font-bold mb-6">Posting Lowongan Baru</h3>
+                    <form onsubmit="handlePostJob(event)">
                         <div class="grid grid-cols-2 gap-4 mb-4">
-                            <input type="text" id="job-title" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Posisi" required>
+                            <input type="text" id="job-title" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Posisi Pekerjaan" required>
                             <input type="number" id="job-salary" class="p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Gaji (Juta)" required>
                         </div>
-                        <input type="text" id="job-loc" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Lokasi" required>
-                        <textarea id="job-desc" rows="4" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-6" placeholder="Deskripsi..." required></textarea>
+                        <input type="text" id="job-loc" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-4" placeholder="Lokasi Toko" required>
+                        <textarea id="job-desc" rows="4" class="w-full p-4 bg-slate-50 rounded-2xl outline-none mb-6" placeholder="Deskripsi pekerjaan..."></textarea>
                         <div class="flex gap-4">
                             <button type="button" onclick="toggleJobModal(false)" class="flex-1 font-bold text-slate-400">Batal</button>
                             <button type="submit" class="flex-2 bg-primary text-white py-4 rounded-2xl font-bold px-10">Posting</button>
@@ -302,28 +260,17 @@
         <!-- CHAT -->
         <section id="page-chat" class="page-section h-[70vh]">
             <div class="bg-white rounded-3xl shadow-sm border border-slate-100 flex h-full overflow-hidden">
-                <!-- Sidebar Pesan (Daftar Kontak Terhubung) -->
                 <div class="w-1/3 border-r hidden md:flex flex-col">
-                    <div class="p-6 border-b flex justify-between items-center">
-                        <h3 class="font-bold text-xl">Pesan</h3>
-                    </div>
-                    <div id="chat-users" class="flex-1 overflow-y-auto custom-scrollbar">
-                        <!-- Kontak yang sudah melamar/dilamar muncul di sini -->
-                    </div>
+                    <div class="p-6 border-b"><h3 class="font-bold text-xl">Kontak</h3></div>
+                    <div id="chat-users" class="flex-1 overflow-y-auto custom-scrollbar"></div>
                 </div>
-                <!-- Box Chat -->
                 <div class="flex-1 flex flex-col bg-slate-50/50">
                     <div id="chat-header" class="p-6 bg-white border-b flex items-center">
-                        <h4 id="chat-active-name" class="font-bold text-slate-400">Pilih kontak dari daftar lamaran untuk memulai chat</h4>
+                        <h4 id="chat-active-name" class="font-bold text-slate-400">Pilih kontak</h4>
                     </div>
-                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
-                        <div id="chat-empty-state" class="flex flex-col items-center justify-center h-full text-center text-slate-400 opacity-60">
-                            <i class="fas fa-lock text-4xl mb-4"></i>
-                            <p class="max-w-xs mx-auto text-sm">Anda hanya dapat berkirim pesan jika sudah ada proses lamaran kerja antara kedua pihak.</p>
-                        </div>
-                    </div>
+                    <div id="chat-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-3"></div>
                     <div class="p-6 bg-white border-t">
-                        <form class="flex gap-4" onsubmit="sendMessage(event)">
+                        <form class="flex gap-4" onsubmit="handleSendMessage(event)">
                             <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-50 px-6 py-4 rounded-2xl outline-none" disabled>
                             <button type="submit" id="chat-btn" class="bg-primary text-white w-14 h-14 rounded-2xl flex items-center justify-center disabled:opacity-50" disabled><i class="fas fa-paper-plane"></i></button>
                         </form>
@@ -343,25 +290,16 @@
                             <p id="prof-role-display" class="text-slate-400 uppercase font-bold text-xs tracking-widest mt-1">ROLE</p>
                         </div>
                     </div>
-                    <button onclick="saveProfile()" class="bg-secondary text-white px-8 py-3 rounded-2xl font-bold">Simpan</button>
+                    <button onclick="handleSaveProfile()" class="bg-secondary text-white px-8 py-3 rounded-2xl font-bold">Simpan</button>
                 </div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Lengkap</label>
                         <input type="text" id="prof-name" class="w-full p-4 bg-slate-50 rounded-2xl outline-none">
                     </div>
                     <div id="prof-field-shop">
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Toko/Usaha</label>
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Toko</label>
                         <input type="text" id="prof-shop" class="w-full p-4 bg-slate-50 rounded-2xl outline-none">
-                    </div>
-                    <div id="prof-field-skill" class="hidden md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Keahlian Utama</label>
-                        <input type="text" id="prof-skill" class="w-full p-4 bg-slate-50 rounded-2xl outline-none" placeholder="Contoh: Barista, Desain Grafis">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Deskripsi / Bio</label>
-                        <textarea id="prof-desc" rows="4" class="w-full p-4 bg-slate-50 rounded-2xl outline-none"></textarea>
                     </div>
                 </div>
             </div>
@@ -371,86 +309,176 @@
 
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-dark text-white rounded-full font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-[200]"></div>
 
-    <script>
+    <!-- Firebase Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'umkm-connect-default';
+
         // State
-        let users = JSON.parse(localStorage.getItem('uc_users') || '[]');
         let currentUser = null;
         let activeChatId = null;
-        let transactions = JSON.parse(localStorage.getItem('uc_finance') || '[]');
-        let jobs = JSON.parse(localStorage.getItem('uc_jobs') || '[]');
-        let chats = JSON.parse(localStorage.getItem('uc_chats') || '[]');
-        let applications = JSON.parse(localStorage.getItem('uc_apps') || '[]'); // Menyimpan data lamaran/kontak kerja
+        let allUsers = [];
+        let allJobs = [];
+        let allApps = [];
 
-        // Auth
-        function toggleRegFields(role) {
-            document.getElementById('field-shop-name').classList.toggle('hidden', role !== 'umkm');
-        }
+        // App Init & Auth Rule 3
+        const initApp = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
 
-        function handleAuth(e, type) {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Fetch/Create user profile in Firestore
+                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
+                const snap = await getDoc(userRef);
+                
+                if (snap.exists()) {
+                    currentUser = { id: user.uid, ...snap.data() };
+                } else {
+                    // Just an anonymous user session without profile data yet
+                    currentUser = null;
+                }
+                updateNav();
+                setupListeners();
+                
+                // Seed dummy data if needed
+                seedDummyData();
+            } else {
+                currentUser = null;
+                updateNav();
+                navigate('home');
+            }
+        });
+
+        // Seed Dummy Data (4 Accounts)
+        const seedDummyData = async () => {
+            const usersCol = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+            const q = await getDocs(usersCol);
+            
+            // Only seed if empty (or specific dummy emails don't exist)
+            if (q.empty) {
+                const dummies = [
+                    { email: 'kopi@test.com', pass: '123456', name: 'Budi Santoso', shop: 'Kopi Senja', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Kopi+Senja&background=2563eb&color=fff' },
+                    { email: 'warung@test.com', pass: '123456', name: 'Siti Aminah', shop: 'Warung Barokah', role: 'umkm', avatar: 'https://ui-avatars.com/api/?name=Warung+Barokah&background=10b981&color=fff' },
+                    { email: 'budi@test.com', pass: '123456', name: 'Budi Pekerja', role: 'worker', skill: 'Barista', avatar: 'https://ui-avatars.com/api/?name=Budi&background=f59e0b&color=fff' },
+                    { email: 'ani@test.com', pass: '123456', name: 'Ani Lestari', role: 'worker', skill: 'Admin Gudang', avatar: 'https://ui-avatars.com/api/?name=Ani&background=6366f1&color=fff' }
+                ];
+
+                for (const d of dummies) {
+                    // In a real app, we'd use auth.createUser, but for this demo we simulate with a "users" collection lookup
+                    const id = 'dummy_' + d.email.split('@')[0];
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id), d);
+                }
+            }
+        };
+
+        // Listeners
+        const setupListeners = () => {
+            if (!auth.currentUser) return;
+
+            // Users Listener
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
+                allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderChatList();
+            }, (err) => console.error(err));
+
+            // Jobs Listener
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'jobs'), (snap) => {
+                allJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderJobGrid();
+                if (currentUser?.role === 'umkm') renderMyJobs();
+            }, (err) => console.error(err));
+
+            // Applications Listener (for Chat accessibility)
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'applications'), (snap) => {
+                allApps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderChatList();
+            });
+
+            // Finance Listener (Specific to current user)
+            onSnapshot(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'finance'), (snap) => {
+                const trans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderFinanceTable(trans);
+            });
+        };
+
+        // Auth Actions
+        window.handleAuthAction = async (e, type) => {
             e.preventDefault();
-            if(type === 'register') {
+            const email = type === 'login' ? document.getElementById('log-email').value : document.getElementById('reg-email').value;
+            const pass = type === 'login' ? document.getElementById('log-pass').value : document.getElementById('reg-pass').value;
+
+            // Simple "Login" Simulation by checking "users" collection
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
+            const snap = await getDocs(q);
+            const found = snap.docs.find(d => d.data().email === email && d.data().pass === pass);
+
+            if (type === 'login') {
+                if (found) {
+                    currentUser = { id: found.id, ...found.data() };
+                    updateNav();
+                    navigate('dashboard');
+                    showToast('Login Berhasil!');
+                } else {
+                    showToast('Email atau password salah', 'error');
+                }
+            } else {
+                if (found) return showToast('Email sudah terdaftar', 'error');
+                const role = document.querySelector('input[name="role"]:checked').value;
                 const name = document.getElementById('reg-name').value;
                 const shop = document.getElementById('reg-shop').value;
-                const email = document.getElementById('reg-email').value;
-                const pass = document.getElementById('reg-pass').value;
-                const role = document.querySelector('input[name="role"]:checked').value;
-
-                if(users.find(u => u.email === email)) return showToast('Email sudah ada!', 'error');
-
                 const newUser = {
-                    id: 'u_' + Date.now(),
-                    name, shop: role === 'umkm' ? shop : '', email, pass, role,
-                    skill: '', desc: '',
+                    email, pass, name, role, 
+                    shop: role === 'umkm' ? shop : '',
                     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(role === 'umkm' ? shop : name)}&background=random`
                 };
-                users.push(newUser);
-                localStorage.setItem('uc_users', JSON.stringify(users));
-                loginUser(newUser);
-            } else {
-                const email = document.getElementById('log-email').value;
-                const pass = document.getElementById('log-pass').value;
-                const user = users.find(u => u.email === email && u.pass === pass);
-                if(user) loginUser(user);
-                else showToast('Email/Password salah!', 'error');
+                const id = 'u_' + Date.now();
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id), newUser);
+                currentUser = { id, ...newUser };
+                updateNav();
+                navigate('dashboard');
+                showToast('Akun berhasil dibuat!');
             }
-        }
+        };
 
-        function loginUser(user) {
-            currentUser = user;
-            updateNav();
-            navigate('dashboard');
-            showToast('Selamat Datang!');
-        }
-
-        function logout() {
+        window.handleLogout = () => {
             currentUser = null;
             updateNav();
             navigate('home');
-        }
+        };
 
         // Navigation
-        function navigate(page) {
+        window.navigate = (page) => {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
-            
-            if(page === 'dashboard') initDashboard();
-            if(page === 'finance') renderFinance();
-            if(page === 'jobs') initJobsView();
-            if(page === 'chat') renderChatList();
-            if(page === 'profile') initProfile();
-        }
+            if (page === 'dashboard') initDashboard();
+            if (page === 'chat') renderChatList();
+            if (page === 'profile') initProfile();
+        };
 
-        function toggleAuthTab(tab) {
+        window.toggleAuthTab = (tab) => {
             document.getElementById('form-login').classList.toggle('hidden', tab === 'register');
             document.getElementById('form-register').classList.toggle('hidden', tab === 'login');
             document.getElementById('tab-login').className = tab === 'login' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-primary' : 'flex-1 py-3 font-bold text-slate-400';
             document.getElementById('tab-register').className = tab === 'register' ? 'flex-1 py-3 font-bold rounded-2xl bg-white shadow-sm text-secondary' : 'flex-1 py-3 font-bold text-slate-400';
-        }
+        };
 
-        function updateNav() {
+        const updateNav = () => {
             const guest = document.getElementById('nav-guest');
             const user = document.getElementById('nav-user');
-            if(currentUser) {
+            if (currentUser) {
                 guest.classList.add('hidden');
                 user.classList.remove('hidden');
                 document.getElementById('nav-avatar').src = currentUser.avatar;
@@ -459,106 +487,87 @@
                 guest.classList.remove('hidden');
                 user.classList.add('hidden');
             }
-        }
+        };
 
-        // Finance
-        function calculateStrategy() {
-            const budget = parseFloat(document.getElementById('calc-budget').value) || 0;
-            const sales = parseFloat(document.getElementById('calc-sales').value) || 0;
-            const price = parseFloat(document.getElementById('calc-price').value) || 0;
-            if(!sales || !price) return showToast('Isi data simulasi!', 'error');
-            const omzet = sales * price;
-            const cogs = omzet * 0.4;
-            const opx = budget * 0.1;
-            const profit = omzet - cogs - opx;
-            document.getElementById('calc-result').classList.remove('hidden');
-            document.getElementById('res-omzet').innerText = 'Rp ' + omzet.toLocaleString();
-            document.getElementById('res-profit').innerText = 'Rp ' + profit.toLocaleString();
-            let strat = profit < 0 ? "Harga jual rendah/biaya tinggi. Naikkan harga 15%." : "Potensial! Tingkatkan volume via sosmed.";
-            document.getElementById('res-strategy').innerText = strat;
-        }
+        // Dashboard
+        const initDashboard = () => {
+            if (!currentUser) return;
+            document.getElementById('dash-umkm').classList.toggle('hidden', currentUser.role !== 'umkm');
+            document.getElementById('dash-worker').classList.toggle('hidden', currentUser.role !== 'worker');
+            
+            if (currentUser.role === 'umkm') {
+                document.getElementById('dash-shop-name').innerText = currentUser.shop;
+                document.getElementById('dash-owner-name').innerText = currentUser.name;
+                document.getElementById('dash-jobs-count').innerText = allJobs.filter(j => j.userId === currentUser.id).length;
+            } else {
+                document.getElementById('worker-name').innerText = currentUser.name;
+            }
+        };
 
-        function addTransaction(e) {
+        // Finance Actions
+        window.handleAddTransaction = async (e) => {
             e.preventDefault();
-            transactions.push({
-                id: Date.now(), userId: currentUser.id,
-                date: new Date().toLocaleDateString('id-ID'),
+            if (!currentUser) return;
+            const data = {
                 type: document.getElementById('fin-type').value,
                 amount: parseInt(document.getElementById('fin-amount').value),
-                note: document.getElementById('fin-note').value
-            });
-            localStorage.setItem('uc_finance', JSON.stringify(transactions));
+                note: document.getElementById('fin-note').value,
+                timestamp: serverTimestamp(),
+                date: new Date().toLocaleDateString('id-ID')
+            };
+            await addDoc(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'finance'), data);
             e.target.reset();
-            renderFinance();
-            showToast('Tercatat');
-        }
+            showToast('Transaksi disimpan');
+        };
 
-        function renderFinance() {
-            const userTrans = transactions.filter(t => t.userId === currentUser.id);
+        const renderFinanceTable = (data) => {
             const tbody = document.getElementById('finance-table');
-            let inc = 0, exp = 0;
-            tbody.innerHTML = userTrans.map(t => {
-                if(t.type === 'income') inc += t.amount; else exp += t.amount;
-                return `<tr><td class="py-3 text-[11px]">${t.date}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
-            }).reverse().join('');
-            const profit = inc - exp;
-            document.getElementById('ai-report-text').innerText = userTrans.length > 0 ? (profit > 0 ? `Surplus Rp ${profit.toLocaleString()}. Simpan 20% dana darurat.` : `Defisit Rp ${Math.abs(profit).toLocaleString()}. Evaluasi biaya harian.`) : "Belum ada data.";
-        }
-
-        // Jobs & Applications
-        function initJobsView() {
-            if(currentUser.role === 'umkm') {
-                document.getElementById('jobs-umkm-view').classList.remove('hidden');
-                document.getElementById('jobs-worker-view').classList.add('hidden');
-                renderMyJobs();
-            } else {
-                document.getElementById('jobs-umkm-view').classList.add('hidden');
-                document.getElementById('jobs-worker-view').classList.remove('hidden');
-                filterJobs();
+            let balance = 0;
+            tbody.innerHTML = data.sort((a,b) => b.timestamp - a.timestamp).map(t => {
+                balance += (t.type === 'income' ? t.amount : -t.amount);
+                return `<tr><td class="py-3 text-[11px]">${t.date || ''}</td><td class="py-3 font-medium">${t.note}</td><td class="py-3 text-right font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}</td></tr>`;
+            }).join('');
+            
+            if(document.getElementById('dash-balance')) {
+                document.getElementById('dash-balance').innerText = 'Rp ' + balance.toLocaleString();
             }
-        }
+        };
 
-        function toggleJobModal(show) { document.getElementById('job-modal').classList.toggle('hidden', !show); }
-
-        function postJob(e) {
+        // Job Actions
+        window.handlePostJob = async (e) => {
             e.preventDefault();
-            jobs.push({
-                id: 'j_' + Date.now(), userId: currentUser.id, shopName: currentUser.shop,
+            const data = {
+                userId: currentUser.id,
+                shopName: currentUser.shop,
                 title: document.getElementById('job-title').value,
                 salary: document.getElementById('job-salary').value,
                 location: document.getElementById('job-loc').value,
                 desc: document.getElementById('job-desc').value,
-                avatar: currentUser.avatar
-            });
-            localStorage.setItem('uc_jobs', JSON.stringify(jobs));
+                avatar: currentUser.avatar,
+                createdAt: serverTimestamp()
+            };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'jobs'), data);
             toggleJobModal(false);
-            renderMyJobs();
-            showToast('Diposting');
-        }
+            showToast('Lowongan berhasil diposting');
+        };
 
-        function applyJob(jobId, employerId) {
-            // Cek apakah sudah melamar sebelumnya
-            const existing = applications.find(a => a.workerId === currentUser.id && a.jobId === jobId);
-            if(existing) return showToast('Anda sudah melamar pekerjaan ini.', 'error');
+        window.applyJob = async (jobId, employerId) => {
+            if (!currentUser) return navigate('auth');
+            const exists = allApps.find(a => a.jobId === jobId && a.workerId === currentUser.id);
+            if (exists) return showToast('Sudah melamar pekerjaan ini', 'error');
 
-            applications.push({
-                id: 'app_' + Date.now(),
-                workerId: currentUser.id,
-                employerId: employerId,
-                jobId: jobId,
-                timestamp: Date.now()
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'applications'), {
+                jobId, employerId, workerId: currentUser.id, timestamp: serverTimestamp()
             });
-            localStorage.setItem('uc_apps', JSON.stringify(applications));
-            showToast('Lamaran & Profil Terkirim! Chat kini tersedia.');
-            
-            // Otomatis bisa chat ke pemilik lowongan
-            setTimeout(() => { startChat(employerId); }, 1000);
-        }
+            showToast('Lamaran Terkirim! Chat aktif.');
+            navigate('chat');
+        };
 
-        function filterJobs() {
-            const query = document.getElementById('job-search').value.toLowerCase();
-            const grid = currentUser.role === 'umkm' ? document.getElementById('job-grid') : document.getElementById('explore-jobs-grid');
-            const filtered = jobs.filter(j => j.title.toLowerCase().includes(query) || j.shopName.toLowerCase().includes(query));
+        window.renderJobGrid = () => {
+            const grid = document.getElementById('job-grid');
+            if (!grid) return;
+            const search = document.getElementById('job-search').value.toLowerCase();
+            const filtered = allJobs.filter(j => j.title.toLowerCase().includes(search) || j.shopName.toLowerCase().includes(search));
             
             grid.innerHTML = filtered.map(j => `
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 hover:shadow-lg transition-all">
@@ -566,48 +575,51 @@
                         <img src="${j.avatar}" class="w-12 h-12 rounded-xl object-cover">
                         <div><h4 class="font-bold">${j.title}</h4><p class="text-primary text-xs font-bold">${j.shopName}</p></div>
                     </div>
-                    <p class="text-xs text-slate-500 line-clamp-2 mb-4">${j.desc}</p>
+                    <p class="text-xs text-slate-500 line-clamp-2 mb-4">${j.desc || 'Deskripsi tidak tersedia'}</p>
                     <button onclick="applyJob('${j.id}', '${j.userId}')" class="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold">Lamar Sekarang</button>
                 </div>
             `).join('');
-        }
+        };
 
-        function renderMyJobs() {
+        window.renderMyJobs = () => {
             const list = document.getElementById('my-jobs-list');
-            const myJobs = jobs.filter(j => j.userId === currentUser.id);
-            list.innerHTML = myJobs.map(j => `<div class="bg-white p-5 rounded-2xl border flex justify-between items-center"><div class="flex items-center gap-4"><div class="w-10 h-10 bg-blue-50 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-briefcase"></i></div><div><h4 class="font-bold">${j.title}</h4><p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">${j.location} • Rp ${j.salary}Jt</p></div></div><button onclick="deleteJob('${j.id}')" class="text-red-400 hover:text-red-600 font-bold text-sm">Hapus</button></div>`).join('');
-        }
+            if (!list) return;
+            const myJobs = allJobs.filter(j => j.userId === currentUser.id);
+            list.innerHTML = myJobs.map(j => `
+                <div class="bg-white p-5 rounded-2xl border flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-blue-50 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-briefcase"></i></div>
+                        <div><h4 class="font-bold">${j.title}</h4><p class="text-[10px] text-slate-400 font-bold uppercase">${j.location} • Rp ${j.salary}Jt</p></div>
+                    </div>
+                    <button onclick="handleDeleteJob('${j.id}')" class="text-red-400 hover:text-red-600 font-bold text-sm">Hapus</button>
+                </div>
+            `).join('');
+        };
 
-        function deleteJob(id) {
-            jobs = jobs.filter(j => j.id !== id);
-            localStorage.setItem('uc_jobs', JSON.stringify(jobs));
-            renderMyJobs();
-        }
+        window.handleDeleteJob = async (id) => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'jobs', id));
+            showToast('Terhapus');
+        };
 
-        // Chat & Contact Logic
-        function renderChatList() {
+        window.toggleJobModal = (show) => document.getElementById('job-modal').classList.toggle('hidden', !show);
+
+        // Chat Actions
+        const renderChatList = () => {
             const list = document.getElementById('chat-users');
+            if (!list || !currentUser) return;
+
+            // Connect if applied
+            const connections = allApps.filter(a => a.workerId === currentUser.id || a.employerId === currentUser.id);
+            const connectedIds = [...new Set(connections.map(a => a.workerId === currentUser.id ? a.employerId : a.workerId))];
             
-            // Ambil ID orang-orang yang terhubung via lamaran
-            let connectedUserIds = [];
-            if(currentUser.role === 'worker') {
-                // Pekerja melihat UMKM yang mereka lamar
-                connectedUserIds = applications.filter(a => a.workerId === currentUser.id).map(a => a.employerId);
-            } else {
-                // UMKM melihat Pekerja yang melamar ke mereka
-                connectedUserIds = applications.filter(a => a.employerId === currentUser.id).map(a => a.workerId);
-            }
-
-            // Hapus duplikat ID
-            connectedUserIds = [...new Set(connectedUserIds)];
-            const connectedUsers = users.filter(u => connectedUserIds.includes(u.id));
-
-            if(connectedUsers.length === 0) {
-                list.innerHTML = `<div class="p-10 text-center text-slate-400 text-xs italic">Belum ada kontak kerja yang tersedia.</div>`;
+            const contactUsers = allUsers.filter(u => connectedIds.includes(u.id));
+            
+            if (contactUsers.length === 0) {
+                list.innerHTML = `<p class="p-6 text-xs text-slate-400 italic">Lamar pekerjaan untuk membuka fitur chat.</p>`;
                 return;
             }
 
-            list.innerHTML = connectedUsers.map(u => `
+            list.innerHTML = contactUsers.map(u => `
                 <div onclick="openChat('${u.id}')" class="p-4 border-b flex items-center gap-4 cursor-pointer hover:bg-slate-50 ${activeChatId === u.id ? 'bg-blue-50' : ''}">
                     <img src="${u.avatar}" class="w-10 h-10 rounded-xl object-cover">
                     <div>
@@ -616,92 +628,70 @@
                     </div>
                 </div>
             `).join('');
-        }
+        };
 
-        function openChat(id) {
+        window.openChat = (id) => {
             activeChatId = id;
-            const target = users.find(u => u.id === id);
+            const target = allUsers.find(u => u.id === id);
             document.getElementById('chat-active-name').innerText = target.role === 'umkm' ? target.shop : target.name;
-            document.getElementById('chat-active-name').classList.remove('text-slate-400');
             document.getElementById('chat-input').disabled = false;
             document.getElementById('chat-btn').disabled = false;
-            document.getElementById('chat-empty-state').classList.add('hidden');
             renderChatList();
-            renderMessages();
-        }
+            
+            // Sub to messages
+            const qChat = query(collection(db, 'artifacts', appId, 'public', 'data', 'chats'));
+            onSnapshot(qChat, (snap) => {
+                const msgs = snap.docs.map(d => d.data())
+                    .filter(m => (m.from === currentUser.id && m.to === activeChatId) || (m.from === activeChatId && m.to === currentUser.id))
+                    .sort((a,b) => a.timestamp - b.timestamp);
+                
+                const box = document.getElementById('chat-box');
+                box.innerHTML = msgs.map(m => `
+                    <div class="flex ${m.from === currentUser.id ? 'justify-end' : 'justify-start'}">
+                        <div class="px-4 py-2 rounded-2xl text-sm ${m.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border'}">${m.msg}</div>
+                    </div>
+                `).join('');
+                box.scrollTop = box.scrollHeight;
+            });
+        };
 
-        function renderMessages() {
-            const box = document.getElementById('chat-box');
-            const relevant = chats.filter(c => (c.from === currentUser.id && c.to === activeChatId) || (c.from === activeChatId && c.to === currentUser.id));
-            box.innerHTML = relevant.map(c => `
-                <div class="flex ${c.from === currentUser.id ? 'justify-end' : 'justify-start'}">
-                    <div class="px-4 py-2 rounded-2xl text-sm ${c.from === currentUser.id ? 'bg-primary text-white' : 'bg-white border shadow-sm'}">${c.msg}</div>
-                </div>
-            `).join('');
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function sendMessage(e) {
+        window.handleSendMessage = async (e) => {
             e.preventDefault();
             const input = document.getElementById('chat-input');
-            if(!input.value.trim()) return;
-            chats.push({ from: currentUser.id, to: activeChatId, msg: input.value, timestamp: Date.now() });
-            localStorage.setItem('uc_chats', JSON.stringify(chats));
+            if (!input.value.trim() || !activeChatId) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), {
+                from: currentUser.id, to: activeChatId, msg: input.value, timestamp: Date.now()
+            });
             input.value = '';
-            renderMessages();
-        }
+        };
 
-        function startChat(id) { navigate('chat'); openChat(id); }
-
-        // Profile
-        function initProfile() {
+        // Profile Actions
+        const initProfile = () => {
             document.getElementById('prof-img').src = currentUser.avatar;
-            document.getElementById('prof-name-display').innerText = currentUser.name;
-            document.getElementById('prof-role-display').innerText = currentUser.role;
             document.getElementById('prof-name').value = currentUser.name;
-            document.getElementById('prof-shop').value = currentUser.shop;
-            document.getElementById('prof-skill').value = currentUser.skill || '';
-            document.getElementById('prof-desc').value = currentUser.desc || '';
+            document.getElementById('prof-shop').value = currentUser.shop || '';
             document.getElementById('prof-field-shop').classList.toggle('hidden', currentUser.role !== 'umkm');
-            document.getElementById('prof-field-skill').classList.toggle('hidden', currentUser.role !== 'worker');
-        }
+        };
 
-        function saveProfile() {
-            currentUser.name = document.getElementById('prof-name').value;
-            currentUser.shop = document.getElementById('prof-shop').value;
-            currentUser.skill = document.getElementById('prof-skill').value;
-            currentUser.desc = document.getElementById('prof-desc').value;
-            const idx = users.findIndex(u => u.id === currentUser.id);
-            users[idx] = currentUser;
-            localStorage.setItem('uc_users', JSON.stringify(users));
-            showToast('Profil Disimpan');
-            initProfile();
-        }
+        window.handleSaveProfile = async () => {
+            const updated = {
+                name: document.getElementById('prof-name').value,
+                shop: document.getElementById('prof-shop').value
+            };
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.id), updated);
+            currentUser = { ...currentUser, ...updated };
+            showToast('Profil Diperbarui');
+        };
 
-        // Utils
-        function showToast(msg, type = 'success') {
+        // Utility
+        window.showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 ${type === 'error' ? 'bg-red-600' : 'bg-dark'} text-white rounded-full font-bold shadow-2xl opacity-100 transition-all z-[200]`;
             setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 3000);
-        }
+        };
 
-        function initDashboard() {
-            document.getElementById('dash-umkm').classList.toggle('hidden', currentUser.role !== 'umkm');
-            document.getElementById('dash-worker').classList.toggle('hidden', currentUser.role !== 'worker');
-            if(currentUser.role === 'umkm') {
-                document.getElementById('dash-shop-name').innerText = currentUser.shop;
-                document.getElementById('dash-owner-name').innerText = currentUser.name;
-                const userTrans = transactions.filter(t => t.userId === currentUser.id);
-                let balance = 0;
-                userTrans.forEach(t => balance += (t.type === 'income' ? t.amount : -t.amount));
-                document.getElementById('dash-balance').innerText = 'Rp ' + balance.toLocaleString();
-                document.getElementById('dash-jobs-count').innerText = jobs.filter(j => j.userId === currentUser.id).length;
-            } else {
-                document.getElementById('worker-name').innerText = currentUser.name;
-                filterJobs();
-            }
-        }
+        initApp();
     </script>
 </body>
 </html>
